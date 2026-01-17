@@ -1,0 +1,69 @@
+const { test, expect } = require('@playwright/test')
+
+
+let newWebContext;
+test.beforeAll(async ({ browser }) => {
+
+    const context = await browser.newContext();
+    const page = await context.newPage();
+    const products = page.locator('.card-body')
+    await page.goto('https://rahulshettyacademy.com/client')
+    await page.getByPlaceholder('email@example.com').fill("chand7272@gmail.com");
+    await page.getByPlaceholder('enter your passsword').fill('Ramesh#12345');
+    await page.getByRole('button', { name: 'Login' }).click();
+    await products.first().waitFor()
+    // await page.waitForLoadState('networkidle');
+    await context.storageState({ path: 'state.json' });
+    await context.close();
+    newWebContext = await browser.newContext({ storageState: 'state.json' });
+
+
+})
+
+
+test('Client App test on another way', async () => {
+    const page = await newWebContext.newPage();
+
+    await page.goto('https://rahulshettyacademy.com/client')
+    const productName = "ZARA COAT 3";
+    const emailid = "chand7272@gmail.com";
+    const cartOption = page.locator('[routerlink*="cart"]');
+    await page.locator('.card-body').filter({ hasText: productName }).getByRole('button', { name: 'Add To Cart' }).click();
+    await page.getByRole('listitem').getByRole('button', { name: 'Cart' }).click();
+    await page.locator('div li').first().waitFor();
+    await expect(page.getByText(productName)).toBeVisible();
+    await page.locator('text=Checkout').click();
+    await page.getByPlaceholder('Select Country').pressSequentially('ind');
+    await page.getByRole('button', { name: 'India' }).nth(1).click();
+    await expect(page.locator('label[type="text"]')).toHaveText(emailid);
+    await page.locator('(//input[@type="text"])[2]').fill('1234');
+    await page.locator('(//input[@type="text"])[3]').fill('12345678901234');
+    await page.locator('(//input[@type="text"])[4]').fill('rahulshettyacademy');
+    await page.getByRole('button', { name: 'Apply Coupon' }).click();
+    await expect(page.locator('.mt-1.ng-star-inserted')).toHaveText('* Coupon Applied');
+
+    //await page.getByRole('button', {name : 'Place Order '}).click();
+
+    await page.getByText("PLACE ORDER").click();
+
+    const confirmationmsg = await page.locator('.hero-primary').textContent();
+    console.log(confirmationmsg);
+    expect(confirmationmsg).toBe(" Thankyou for the order. ");
+
+    const orderId = (await page.locator('.em-spacer-1 label').last().textContent() || '').trim();
+    console.log(orderId);
+
+
+})
+
+
+test('Client App login via storageState and check visibility of product !!', async () => {
+    const page = await newWebContext.newPage();
+
+    await page.goto('https://rahulshettyacademy.com/client')
+    const productName = "ZARA COAT 3";
+    await page.locator('.card-body').filter({ hasText: productName }).getByRole('button', { name: 'Add To Cart' }).click();
+    await page.getByRole('listitem').getByRole('button', { name: 'Cart' }).click();
+    await page.locator('div li').first().waitFor();
+    await expect(page.getByText(productName)).toBeVisible();
+});

@@ -1,0 +1,16 @@
+# Node
+node_modules/
+
+# Playwright reports
+playwright-report/
+test-results/
+
+# Allure
+# Environment files
+.env
+
+# OS / Editor
+.DS_Store
+.vscode/
+.idea/
+*.png

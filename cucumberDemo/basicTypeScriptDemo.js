@@ -1,0 +1,22 @@
+var message = "Hello, TypeScript!";
+console.log(message);
+var count = 42;
+console.log("Count is:", count);
+var isActive = true;
+console.log("Is Active:", isActive);
+var numbers = [1, 2, 3, 4, 5];
+console.log("Numbers:", numbers);
+var data = "This can be any type";
+data = 100;
+console.log("Data:", data);
+var tuple = ["Age", 30];
+console.log("Tuple:", tuple);
+var dict = { "one": 1, "two": 2 };
+console.log("Dictionary:", dict);
+var Color;
+(function (Color) {
+    Color[Color["Red"] = 0] = "Red";
+    Color[Color["Green"] = 1] = "Green";
+})(Color || (Color = {}));
+var favoriteColor = Color.Red;
+console.log("Favorite Color:", favoriteColor);
