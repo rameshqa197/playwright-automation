@@ -12,7 +12,7 @@ test.beforeAll(async ({ browser }) => {
     await page.getByPlaceholder('enter your passsword').fill('Ramesh#12345');
     await page.getByRole('button', { name: 'Login' }).click();
     await products.first().waitFor()
-    // await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('networkidle');
     await context.storageState({ path: 'state.json' });
     await context.close();
     newWebContext = await browser.newContext({ storageState: 'state.json' });
@@ -23,7 +23,6 @@ test.beforeAll(async ({ browser }) => {
 
 test('Client App test on another way', async () => {
     const page = await newWebContext.newPage();
-
     await page.goto('https://rahulshettyacademy.com/client')
     const productName = "ZARA COAT 3";
     const emailid = "chand7272@gmail.com";
@@ -59,7 +58,6 @@ test('Client App test on another way', async () => {
 
 test('Client App login via storageState and check visibility of product !!', async () => {
     const page = await newWebContext.newPage();
-
     await page.goto('https://rahulshettyacademy.com/client')
     const productName = "ZARA COAT 3";
     await page.locator('.card-body').filter({ hasText: productName }).getByRole('button', { name: 'Add To Cart' }).click();
