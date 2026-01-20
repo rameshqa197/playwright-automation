@@ -1,6 +1,6 @@
 
 const { test, expect, request } = require('@playwright/test')
-
+const{getDbData}= require('../utils/dbUtils');
 
 const loginPayload = { userEmail: "chand7272@gmail.com", userPassword: "Ramesh#12345" };
 const orderpayload = {
@@ -80,6 +80,20 @@ test('Client App test on another way', async ({ page }) => {
     console.log(productTitles);
 
     console.log(orderId);
+    console.log("Product order details: ", productOrderId);
+    console.log(message);
+
+    const dbQuery = `SELECT productname FROM testingipay.login_data WHERE username='${emailid}'`;
+    const dbData = await getDbData(dbQuery);
+    console.log("DB Data is : ", dbData);
+
+   
+    const productInDb = dbData.map(b => b.productname);
+    console.log("Product in DB: ", productInDb);
+
+    expect(productInDb).toContain(productOrderId);
+    //expect(dbData[0].productname).toBe(productOrderId);
+   
 
     await page.locator('button[routerlink*=myorders]').click();
     await page.locator('tbody').first().waitFor();
@@ -96,7 +110,7 @@ test('Client App test on another way', async ({ page }) => {
     }
 
     const orderIdDetails = await page.locator('.col-text.-main').textContent();
-    console.log("Product order details are :: ", orderIdDetails);
+    console.log("Product order Id are :: ", orderIdDetails);
     expect(orderId.includes(orderIdDetails.trim())).toBeTruthy();
 
 

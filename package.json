@@ -3,10 +3,11 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
+    "test": "npx playwright test --headed",
     "regression": "npx playwright test",
     "webTests": "npx playwright test --grep @Web",
     "APITests": "npx playwright test --grep @API",
-   "WebRegTest": "npx playwright test --grep \"@Web|@API\"",
+    "WebRegTest": "npx playwright test --grep \"@Web|@API\"",
     "SafariNewConfig": "npx playwright test --config playwright.config1.js --project=safari",
     "AllureReport": "npx playwright test --reporter=line,allure-playwright && npx allure serve allure-results"
   },
@@ -24,5 +25,8 @@
     "expect": "^30.2.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "mysql2": "^3.16.1"
   }
 }
