@@ -1,136 +1,55 @@
-name: Playwright Tests with Allure
+name: Playwright Tests with HTML & Allure Report
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [ main,master]
   pull_request:
-    branches: [ main, master ]
-  schedule:
-    - cron: '30 18 * * *'   # Nightly run ~12:00 AM IST
-  workflow_dispatch:        # Allows manual trigger
+    branches: [ main,master]
+  workflow_dispatch:
 
 jobs:
   test:
     runs-on: ubuntu-latest
+    timeout-minutes: 60
 
     steps:
-      - name: Checkout code
+      - name: Checkout Code
         uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 18
-          cache: 'npm'
 
-      - name: Install dependencies
+      - name: Install Dependencies
         run: npm ci
 
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
 
-      - name: Setup Java for Allure
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'temurin'
-          java-version: '11'
+      # ✅ Run Tests
+      - name: Run Playwright Tests
+        run: npx playwright test
 
-      - name: Clean previous allure results
-        run: |
-          rm -rf allure-results allure-report || true
-          mkdir -p allure-results
-
-      - name: Run Playwright tests with debugging
-        run: |
-          echo "Running Playwright tests..."
-          npx playwright test --reporter=json,allure-playwright 2>&1 | tee test-output.log
-          echo "Exit code: $?"
-        continue-on-error: true
-        env:
-          CI: true
-          ALLURE_RESULTS_DIR: ./allure-results
-
-      - name: Debug test execution
-        if: always()
-        run: |
-          echo "=== Test Output Log ==="
-          cat test-output.log || echo "No test output log found"
-          echo "=== Current Directory ==="
-          pwd
-          ls -la
-          echo "=== Allure Results Check ==="
-          ls -la allure-results/ || echo "No allure-results folder"
-          find . -name "*.json" -type f | head -10
-          echo "=== Package.json check ==="
-          cat package.json | grep -A5 -B5 allure || echo "No allure in package.json"
-
-      - name: Install Allure CLI via npm
-        if: always()
-        run: |
-          npm install -g allure-commandline@latest
-          allure --version
-          which allure
-
+      # ✅ Generate Allure HTML Report
       - name: Generate Allure Report
         if: always()
         run: |
-          echo "Checking for allure results..."
-          if [ -d "allure-results" ]; then
-            result_count=$(find allure-results -name "*.json" | wc -l)
-            echo "Found $result_count JSON files in allure-results"
-            
-            if [ "$result_count" -gt 0 ]; then
-              echo "Generating Allure report..."
-              allure generate allure-results --output allure-report --clean
-              echo "Report generation completed"
-              ls -la allure-report/
-              
-              # Check if index.html exists
-              if [ -f "allure-report/index.html" ]; then
-                echo "✅ Allure report generated successfully!"
-                echo "Report size: $(du -sh allure-report/)"
-              else
-                echo "❌ index.html not found in allure-report"
-              fi
-            else
-              echo "⚠️  No JSON result files found, creating dummy report"
-              mkdir -p allure-report
-              echo "<html><body><h1>No Test Results Found</h1><p>Tests may have failed to run or no allure results were generated.</p></body></html>" > allure-report/index.html
-            fi
-          else
-            echo "❌ allure-results directory not found"
-            mkdir -p allure-report
-            echo "<html><body><h1>No Results Directory</h1></body></html>" > allure-report/index.html
-          fi
+          npm install -g allure-commandline
+          allure generate allure-results -o allure-report --clean
 
-      - name: Upload Test Logs
+      # ✅ Upload Playwright HTML Report
+      - name: Upload Playwright HTML Report
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: test-logs
-          path: test-output.log
-          retention-days: 7
+          name: playwright-html-report
+          path: playwright-report/
 
-      - name: Upload Allure Results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: allure-results
-          path: allure-results/
-          retention-days: 30
-
+      # ✅ Upload Allure HTML Report
       - name: Upload Allure Report
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: allure-report
+          name: allure-html-report
           path: allure-report/
-          retention-days: 30
-
-      - name: Deploy to GitHub Pages
-        if: always() && github.ref == 'refs/heads/main'
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./allure-report
-          destination_dir: allure-report

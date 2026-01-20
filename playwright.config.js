@@ -13,8 +13,9 @@ export default defineConfig({
   //reporter: 'html',
 
   reporter: [
-    ['html', { open: 'never' }],       // Playwright HTML Report
-    ['allure-playwright']              // Allure Results
+    ['html', { open: 'never' }],   // Playwright HTML report
+    ['line'],
+    ['allure-playwright']          // Allure results
   ],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
    use: {
