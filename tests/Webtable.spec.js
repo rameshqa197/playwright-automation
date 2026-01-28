@@ -33,7 +33,6 @@ test('@Web Match ProductName in web table', async ({ page }) => {
   for (let i = 1; i < rowCount; i++) { // skip header
 
     const cols = rows.nth(i).locator('td');
-
     const productName = await cols.nth(1).innerText(); // ProductName column
 
     if (productName.trim() === "Chais") {
