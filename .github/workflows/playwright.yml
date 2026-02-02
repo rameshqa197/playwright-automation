@@ -44,11 +44,6 @@ jobs:
     runs-on: windows-latest
     timeout-minutes: 30
 
-    strategy:
-      fail-fast: false
-      matrix:
-        browser: [chromium, firefox, webkit]
-
     steps:
       - name: Checkout code from repository
         uses: actions/checkout@v4
@@ -78,22 +73,30 @@ jobs:
           if ("${{ github.event.inputs.test_type }}" -eq "regression") {
             npm run regression
           } elseif ("${{ github.event.inputs.test_type }}" -eq "webTests") {
-            npm run webTests
+            npm run webTests  
           } elseif ("${{ github.event.inputs.test_type }}" -eq "APITests") {
             npm run APITests
           } elseif ("${{ github.event.inputs.test_type }}" -eq "WebRegTest") {
             npm run WebRegTest
           } else {
-            npm run test
+            npx playwright test --reporter=line,allure-playwright
           }
         env:
           HEADLESS: true
+
+      - name: Get Allure history
+        uses: actions/checkout@v4
+        if: always()
+        continue-on-error: true
+        with:
+          ref: gh-pages
+          path: gh-pages
 
       - name: Upload Playwright HTML Report
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-report-${{ matrix.browser }}
+          name: playwright-report
           path: playwright-report/
           retention-days: 30
 
@@ -101,7 +104,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: test-results-${{ matrix.browser }}
+          name: test-results
           path: test-results/
           retention-days: 7
 
@@ -109,7 +112,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: allure-results-${{ matrix.browser }}
+          name: allure-results
           path: allure-results/
           retention-days: 14
 
@@ -117,7 +120,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: screenshots-${{ matrix.browser }}
+          name: screenshots
           path: screenshots/
           retention-days: 7
 
@@ -136,18 +139,50 @@ jobs:
         with:
           node-version: 20
 
-      - name: Install Allure
-        run: npm install -g allure-commandline
+      - name: Install Allure CLI
+        run: |
+          npm install -g allure-commandline
+          allure --version
 
       - name: Download all allure-results
         uses: actions/download-artifact@v4
         with:
-          pattern: allure-results-*
-          merge-multiple: true
+          name: allure-results
           path: allure-results
 
+      - name: List downloaded artifacts
+        run: |
+          echo "Downloaded Allure results:"
+          find allure-results -type f -name "*.json" | wc -l
+          echo "Total JSON files found"
+          ls -la allure-results/ | head -20
+
+      - name: Copy history from previous runs
+        run: |
+          if [ -d "gh-pages/allure-report/history" ]; then
+            cp -r gh-pages/allure-report/history allure-results/
+            echo "History copied from previous runs"
+          else
+            echo "No previous history found"
+          fi
+        continue-on-error: true
+
+      - name: Copy Allure configuration files
+        run: |
+          if [ -f "categories.json" ]; then
+            cp categories.json allure-results/
+            echo "Categories configuration copied"
+          fi
+          if [ -f "environment.properties" ]; then
+            cp environment.properties allure-results/
+            echo "Environment configuration copied"
+          fi
+
       - name: Generate Allure Report
-        run: allure generate allure-results --clean -o allure-report
+        run: |
+          allure generate allure-results --clean -o allure-report
+          echo "Report generated successfully"
+          ls -la allure-report/
 
       - name: Upload Allure Report
         uses: actions/upload-artifact@v4
@@ -158,7 +193,8 @@ jobs:
 
       - name: Deploy to GitHub Pages
         if: github.ref == 'refs/heads/master'
-        uses: peaceiris/actions-gh-pages@v3
+        uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: allure-report
+          destination_dir: allure-report

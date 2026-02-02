@@ -13,7 +13,38 @@ export default defineConfig({
   reporter: [
     ['html', { open: 'never' }],   // Playwright HTML report
     ['line'],
-    ['allure-playwright']          // Allure results
+    ['allure-playwright', {
+      detail: true,
+      outputFolder: 'allure-results',
+      suiteTitle: true,
+      categories: [
+        {
+          name: 'Ignored tests',
+          matchedStatuses: ['skipped']
+        },
+        {
+          name: 'Infrastructure problems',
+          matchedStatuses: ['broken', 'failed'],
+          messageRegex: '.*broken.*'
+        },
+        {
+          name: 'Outdated tests',
+          matchedStatuses: ['broken'],
+          traceRegex: '.*FileNotFoundException.*'
+        },
+        {
+          name: 'Product defects',
+          matchedStatuses: ['failed']
+        }
+      ],
+      environmentInfo: {
+        os_platform: process.env.OS || process.platform,
+        os_release: process.env.OS_VERSION || 'unknown',
+        os_version: process.env.OS_VERSION || 'unknown',
+        browser: 'chromium',
+        node_version: process.version
+      }
+    }]          // Allure results with detailed configuration
   ],
    use: {
   
@@ -24,7 +55,7 @@ export default defineConfig({
     //video: 'retain-on-failure',   // Video only for failed tests
     trace: 'retain-on-failure',      // Capture trace for debugging
   },
-  workers: 2,
+  workers: 1,  // Disabled parallel execution - run tests sequentially
 
 });
 

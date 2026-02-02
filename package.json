@@ -9,7 +9,10 @@
     "APITests": "npx playwright test --grep @API",
     "WebRegTest": "npx playwright test --grep \"@Web|@API\"",
     "SafariNewConfig": "npx playwright test --config playwright.config1.js --project=safari",
-    "AllureReport": "npx playwright test --reporter=line,allure-playwright && npx allure serve allure-results"
+    "AllureReport": "npx playwright test --reporter=line,allure-playwright && npx allure generate allure-results --clean && npx allure serve allure-results",
+    "AllureGenerate": "npx allure generate allure-results --clean -o allure-report",
+    "AllureServe": "npx allure serve allure-results",
+    "AllureOpen": "npx allure open allure-report"
   },
   "keywords": [],
   "author": "",
