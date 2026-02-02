@@ -1,200 +1,94 @@
-name: Playwright Tests
+name: Playwright Automation Tests
+
 on:
-  schedule:
-    # Runs at 3 AM UTC every day
-    - cron: '0 3 * * *'
-  # Allows manual trigger of the workflow
-  workflow_dispatch:
-    inputs:
-      test_type:
-        description: 'Test type to run'
-        required: false
-        default: 'all'
-        type: choice
-        options:
-        - all
-        - regression
-        - webTests
-        - APITests
-        - WebRegTest
-      browser:
-        description: 'Browser to run tests on'
-        required: false
-        default: 'chromium'
-        type: choice
-        options:
-        - chromium
-        - firefox
-        - webkit
-  # Trigger on push to main branch
   push:
     branches: [ master ]
-  # Trigger on pull requests
   pull_request:
     branches: [ master ]
 
-env:
-  # Force color output in Playwright
-  FORCE_COLOR: 1
-  CI: true
+permissions:
+  contents: write
 
 jobs:
   tests:
-    name: Test Execution
-    runs-on: windows-latest
-    timeout-minutes: 30
-
-    steps:
-      - name: Checkout code from repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Setup Node.js 20
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: npm
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Install Playwright browsers
-        run: npx playwright install --with-deps
-
-      - name: Verify test data files
-        run: |
-          Get-Location
-          Get-ChildItem -Path . -Force | Format-Table
-          if (Test-Path "Testdata") { Get-ChildItem -Path "Testdata" -Force | Format-Table }
-
-      - name: Run Playwright tests
-        run: |
-          if ("${{ github.event.inputs.test_type }}" -eq "regression") {
-            npm run regression
-          } elseif ("${{ github.event.inputs.test_type }}" -eq "webTests") {
-            npm run webTests  
-          } elseif ("${{ github.event.inputs.test_type }}" -eq "APITests") {
-            npm run APITests
-          } elseif ("${{ github.event.inputs.test_type }}" -eq "WebRegTest") {
-            npm run WebRegTest
-          } else {
-            npx playwright test --reporter=line,allure-playwright
-          }
-        env:
-          HEADLESS: true
-
-      - name: Get Allure history
-        uses: actions/checkout@v4
-        if: always()
-        continue-on-error: true
-        with:
-          ref: gh-pages
-          path: gh-pages
-
-      - name: Upload Playwright HTML Report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: playwright-report
-          path: playwright-report/
-          retention-days: 30
-
-      - name: Upload test results (JUnit)
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-results
-          path: test-results/
-          retention-days: 7
-
-      - name: Upload Allure results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: allure-results
-          path: allure-results/
-          retention-days: 14
-
-      - name: Upload screenshots
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: screenshots
-          path: screenshots/
-          retention-days: 7
-
-  generate-allure-report:
-    name: Generate Allure Report
+    name: Run Playwright Tests
     runs-on: ubuntu-latest
-    needs: tests
-    if: always()
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: npm
 
-      - name: Install Allure CLI
+      - name: Install dependencies
         run: |
-          npm install -g allure-commandline
-          allure --version
+          npm ci
+          npx playwright install chromium
 
-      - name: Download all allure-results
+      - name: Verify test data (Excel)
+        run: |
+          pwd
+          ls -la
+          ls -la testdata || echo "testdata folder not found"
+
+      - name: Run Playwright tests
+        env:
+          HEADLESS: true
+          BASE_URL: https://your-app-url.com
+        run: npm run test
+
+      - name: Upload Playwright HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report
+          retention-days: 30
+
+      - name: Upload Allure results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results
+          path: allure-results
+          retention-days: 30
+
+  allure_report:
+    name: Generate & Deploy Allure Report
+    runs-on: ubuntu-latest
+    needs: tests
+    if: always()
+
+    steps:
+      - name: Download Allure results
         uses: actions/download-artifact@v4
         with:
           name: allure-results
           path: allure-results
 
-      - name: List downloaded artifacts
-        run: |
-          echo "Downloaded Allure results:"
-          find allure-results -type f -name "*.json" | wc -l
-          echo "Total JSON files found"
-          ls -la allure-results/ | head -20
-
-      - name: Copy history from previous runs
-        run: |
-          if [ -d "gh-pages/allure-report/history" ]; then
-            cp -r gh-pages/allure-report/history allure-results/
-            echo "History copied from previous runs"
-          else
-            echo "No previous history found"
-          fi
+      - name: Checkout gh-pages branch
+        uses: actions/checkout@v4
         continue-on-error: true
-
-      - name: Copy Allure configuration files
-        run: |
-          if [ -f "categories.json" ]; then
-            cp categories.json allure-results/
-            echo "Categories configuration copied"
-          fi
-          if [ -f "environment.properties" ]; then
-            cp environment.properties allure-results/
-            echo "Environment configuration copied"
-          fi
+        with:
+          ref: gh-pages
+          path: gh-pages
 
       - name: Generate Allure Report
-        run: |
-          allure generate allure-results --clean -o allure-report
-          echo "Report generated successfully"
-          ls -la allure-report/
-
-      - name: Upload Allure Report
-        uses: actions/upload-artifact@v4
+        uses: simple-elf/allure-report-action@master
         with:
-          name: allure-report
-          path: allure-report/
-          retention-days: 30
+          allure_results: allure-results
+          gh_pages: gh-pages
+          allure_report: allure-report
+          allure_history: allure-history
 
-      - name: Deploy to GitHub Pages
-        if: github.ref == 'refs/heads/master'
+      - name: Deploy Allure Report to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: allure-report
-          destination_dir: allure-report
+          publish_branch: gh-pages
+          publish_dir: allure-history
+          keep_files: true

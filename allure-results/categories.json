@@ -1,0 +1,1 @@
+[{"name":"Ignored tests","matchedStatuses":["skipped"]},{"name":"Infrastructure problems","matchedStatuses":["broken","failed"],"messageRegex":".*broken.*"},{"name":"Outdated tests","matchedStatuses":["broken"],"traceRegex":".*FileNotFoundException.*"},{"name":"Product defects","matchedStatuses":["failed"]}]

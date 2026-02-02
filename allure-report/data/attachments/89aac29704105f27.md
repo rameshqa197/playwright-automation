@@ -1,0 +1,45 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e4]:
+    - link "Fork me on GitHub":
+      - /url: https://github.com/tourdedave/the-internet
+      - img "Fork me on GitHub" [ref=e5] [cursor=pointer]
+    - generic [ref=e7]:
+      - heading "File Downloader" [level=3] [ref=e8]
+      - link "file_1769705211988.pdf" [ref=e9] [cursor=pointer]:
+        - /url: download/file_1769705211988.pdf
+      - link "SampleFIle.txt" [ref=e10] [cursor=pointer]:
+        - /url: download/SampleFIle.txt
+      - link "some-file.txt" [ref=e11] [cursor=pointer]:
+        - /url: download/some-file.txt
+      - link "Darshan_Resume_2026.docx" [ref=e12] [cursor=pointer]:
+        - /url: download/Darshan_Resume_2026.docx
+      - link "ultah perkedelv2.html" [ref=e13] [cursor=pointer]:
+        - /url: download/ultah perkedelv2.html
+      - link "random_data.txt" [ref=e14] [cursor=pointer]:
+        - /url: download/random_data.txt
+      - link "adidas.jpg" [ref=e15] [cursor=pointer]:
+        - /url: download/adidas.jpg
+      - link "sample_media_file.png" [ref=e16] [cursor=pointer]:
+        - /url: download/sample_media_file.png
+      - link "file_1769704481580.pdf" [ref=e17] [cursor=pointer]:
+        - /url: download/file_1769704481580.pdf
+      - link "test.txt" [ref=e18] [cursor=pointer]:
+        - /url: download/test.txt
+      - link "brew.txt" [ref=e19] [cursor=pointer]:
+        - /url: download/brew.txt
+      - link "test-file.txt" [ref=e20] [cursor=pointer]:
+        - /url: download/test-file.txt
+      - link "file_1769704306520.pdf" [ref=e21] [cursor=pointer]:
+        - /url: download/file_1769704306520.pdf
+      - link "file_1769704341202.pdf" [ref=e22] [cursor=pointer]:
+        - /url: download/file_1769704341202.pdf
+  - generic [ref=e24]:
+    - separator [ref=e25]
+    - generic [ref=e26]:
+      - text: Powered by
+      - link "Elemental Selenium" [ref=e27] [cursor=pointer]:
+        - /url: http://elementalselenium.com/
+```

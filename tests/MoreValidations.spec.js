@@ -47,7 +47,7 @@ test("Handling All Frames", async ({page }) => {
    expect(text).toBe("JOB SUPPORT");
 
    expect(await page.locator("//legend[text()='Checkbox Example']")).toBeVisible();
-   await page.pause()
+  
 
 })
 
