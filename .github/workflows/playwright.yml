@@ -1,7 +1,11 @@
 name: Automation Test Execution
+
 on:
   push:
     branches: [ master ]
+
+permissions:
+  contents: write
 
 jobs:
   tests:
@@ -21,7 +25,7 @@ jobs:
       - name: Install dependencies & Playwright
         run: |
           npm ci
-          npx playwright install
+          npx playwright install chromium
 
       - name: Test execution
         run: npx playwright test
@@ -64,11 +68,16 @@ jobs:
 
       - name: Generate Allure Report
         uses: simple-elf/allure-report-action@master
-        id: allure-report
         with:
           allure_results: allure-results
           gh_pages: gh-pages
           allure_report: allure-report
           allure_history: allure-history
 
-  
+      - name: Deploy Allure Report to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: allure-history
+          keep_files: true
