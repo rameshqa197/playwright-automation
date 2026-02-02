@@ -4,7 +4,9 @@ node_modules/
 # Playwright reports
 playwright-report/
 test-results/
-
+allure-results/
+allure-report/
+logs/
 # Allure
 # Environment files
 .env

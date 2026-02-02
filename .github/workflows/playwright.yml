@@ -24,15 +24,24 @@ jobs:
           node-version: 20
           cache: npm
 
-      - name: Install dependencies
+      - name: Install dependencies (ci-safe)
         run: |
-          npm ci
+          if [ -f package-lock.json ]; then
+            echo "package-lock.json found → running npm ci"
+            npm ci
+          else
+            echo "package-lock.json NOT found → running npm install"
+            npm install
+          fi
           npx playwright install chromium
 
       - name: Verify test data (Excel)
         run: |
+          echo "Working directory:"
           pwd
+          echo "Project files:"
           ls -la
+          echo "Checking testdata folder:"
           ls -la testdata || echo "testdata folder not found"
 
       - name: Run Playwright tests
