@@ -5,14 +5,49 @@ on:
     - cron: '0 3 * * *'
   # Allows manual trigger of the workflow
   workflow_dispatch:
+    inputs:
+      test_type:
+        description: 'Test type to run'
+        required: false
+        default: 'all'
+        type: choice
+        options:
+        - all
+        - regression
+        - webTests
+        - APITests
+        - WebRegTest
+      browser:
+        description: 'Browser to run tests on'
+        required: false
+        default: 'chromium'
+        type: choice
+        options:
+        - chromium
+        - firefox
+        - webkit
   # Trigger on push to main branch
   push:
     branches: [ master ]
+  # Trigger on pull requests
+  pull_request:
+    branches: [ master ]
+
+env:
+  # Force color output in Playwright
+  FORCE_COLOR: 1
+  CI: true
 
 jobs:
   tests:
     name: Test Execution
     runs-on: windows-latest
+    timeout-minutes: 30
+
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chromium, firefox, webkit]
 
     steps:
       - name: Checkout code from repository
@@ -26,26 +61,104 @@ jobs:
           node-version: 20
           cache: npm
 
-      - name: Install dependencies & Playwright
-        run: |
-          npm ci
-          npx playwright install chromium
+      - name: Install dependencies
+        run: npm ci
 
-      - name: Verify Excel test data file
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+
+      - name: Verify test data files
         run: |
-          pwd
-          ls -la
-          ls -la testdata
+          Get-Location
+          Get-ChildItem -Path . -Force | Format-Table
+          if (Test-Path "Testdata") { Get-ChildItem -Path "Testdata" -Force | Format-Table }
 
       - name: Run Playwright tests
-        working-directory: ${{ github.workspace }}
-        run: npm run test
+        run: |
+          if ("${{ github.event.inputs.test_type }}" -eq "regression") {
+            npm run regression
+          } elseif ("${{ github.event.inputs.test_type }}" -eq "webTests") {
+            npm run webTests
+          } elseif ("${{ github.event.inputs.test_type }}" -eq "APITests") {
+            npm run APITests
+          } elseif ("${{ github.event.inputs.test_type }}" -eq "WebRegTest") {
+            npm run WebRegTest
+          } else {
+            npm run test
+          }
+        env:
+          HEADLESS: true
 
-
-      - name: Upload test results
+      - name: Upload Playwright HTML Report
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-report
+          name: playwright-report-${{ matrix.browser }}
           path: playwright-report/
           retention-days: 30
+
+      - name: Upload test results (JUnit)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-${{ matrix.browser }}
+          path: test-results/
+          retention-days: 7
+
+      - name: Upload Allure results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results-${{ matrix.browser }}
+          path: allure-results/
+          retention-days: 14
+
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots-${{ matrix.browser }}
+          path: screenshots/
+          retention-days: 7
+
+  generate-allure-report:
+    name: Generate Allure Report
+    runs-on: ubuntu-latest
+    needs: tests
+    if: always()
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Allure
+        run: npm install -g allure-commandline
+
+      - name: Download all allure-results
+        uses: actions/download-artifact@v4
+        with:
+          pattern: allure-results-*
+          merge-multiple: true
+          path: allure-results
+
+      - name: Generate Allure Report
+        run: allure generate allure-results --clean -o allure-report
+
+      - name: Upload Allure Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-report
+          path: allure-report/
+          retention-days: 30
+
+      - name: Deploy to GitHub Pages
+        if: github.ref == 'refs/heads/master'
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: allure-report
