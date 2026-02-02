@@ -1,18 +1,17 @@
 const { test, expect ,request } = require('@playwright/test');
 const{APiUtils} = require('../utils/APiUtils');
 
-
 const loginPayload= {userEmail: "chand7272@gmail.com",userPassword: "Ramesh#12345" };
 const orderPayload= {orders: [{country: "India",productOrderedId: "6960eac0c941646b7a8b3e68"}]};
 const fakePayLoadOrders = { data: [], message: "No Orders" };
 
 let response;
 test.beforeAll(async () => {
-
     const apiContext =await request.newContext()
     const apiUtils = new APiUtils(apiContext,loginPayload);
     response = await apiUtils.createOrder(orderPayload);
 });
+
 
 test(' @API WebAPi Itegration with Login and order details !!', async ({ page }) => {
 

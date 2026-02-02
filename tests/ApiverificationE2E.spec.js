@@ -171,7 +171,7 @@ test('E-commerce API flow: Login and Add Product with file upload', async ({ req
  
   // Step 2: Add Product (multipart/form-data with file upload)
   //const imagePath = path.resolve(__dirname, 'D:\PlayWrightAutomation\testfile\adidas.jpg'); // ← Put your image in a 'files' folder (or update path)
-  const imagePath = path.join(process.cwd(), 'test-data', 'adidas.jpg');
+  const imagePath = path.join(process.cwd(), 'Testdata', 'adidas.jpg');
   const addProductResponse = await request.post('https://rahulshettyacademy.com/api/ecom/product/add-product', {
     headers: {
         Authorization: token

@@ -1,0 +1,46 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - link "Free Access to InterviewQues/ResumeAssistance/Material" [ref=e2] [cursor=pointer]:
+    - /url: https://rahulshettyacademy.com/documents-request
+  - generic [ref=e3]:
+    - heading [level=3] [ref=e4]:
+      - img [ref=e6]
+    - generic [ref=e12]:
+      - generic [ref=e13]:
+        - text: Old password "learning" is no longer valid. Please use the new password
+        - strong [ref=e14]: "\"Learning@830$3mK2\""
+        - text: .
+      - generic [ref=e15]:
+        - generic [ref=e16]: "Username:"
+        - textbox "Username:" [ref=e17]: rahulshettyacademy
+      - generic [ref=e18]:
+        - generic [ref=e19]: "Password:"
+        - textbox "Password:" [ref=e20]: learning
+      - generic [ref=e22]:
+        - generic [ref=e23] [cursor=pointer]:
+          - text: Admin
+          - radio "Admin" [ref=e24]
+        - generic [ref=e26] [cursor=pointer]:
+          - text: User
+          - radio "User" [checked] [ref=e27]
+      - combobox [ref=e30]:
+        - option "Student"
+        - option "Teacher"
+        - option "Consultant" [selected]
+      - generic [ref=e31]:
+        - generic [ref=e32]:
+          - checkbox "I Agree to the terms and conditions" [ref=e34]
+          - generic [ref=e35]:
+            - text: I Agree to the
+            - link "terms and conditions" [ref=e36] [cursor=pointer]:
+              - /url: "#"
+        - button "Sign In" [ref=e37] [cursor=pointer]
+      - paragraph [ref=e39]:
+        - text: (username is
+        - generic [ref=e40]: rahulshettyacademy
+        - text: and Password is
+        - generic [ref=e41]: Learning@830$3mK2
+        - text: )
+```

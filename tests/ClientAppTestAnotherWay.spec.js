@@ -1,7 +1,10 @@
 const { test, expect } = require('@playwright/test')
+ const logger= require('../utils/logger')
 
 
 test('Client App test on another way', async ({ browser }) => {
+
+    logger.info("Launch the browser istance !!")
 
     const context = await browser.newContext();
     const page = await context.newPage();

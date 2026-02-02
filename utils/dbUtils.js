@@ -1,3 +1,4 @@
+
 const mysql = require('mysql2/promise');
 async function getDbData(query) {
   const connection = await mysql.createConnection({

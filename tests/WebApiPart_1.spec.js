@@ -12,7 +12,6 @@ let productOrderId;
 let message;
 test.beforeAll(async () => {
 
-
     //Create API context for making API requests
     const apiContext = await request.newContext();
     const apiResponse = await apiContext.post('https://rahulshettyacademy.com/api/ecom/auth/login',
