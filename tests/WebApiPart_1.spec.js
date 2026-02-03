@@ -89,6 +89,16 @@ test('Client App test on another way', async ({ page }) => {
    
     const productInDb = dbData.map(b => b.productname);
     console.log("Product in DB: ", productInDb);
+    console.log("Expected productOrderId:", productOrderId);
+    console.log("Actual productInDb type:", typeof productInDb, "Length:", productInDb.length);
+    
+    // Add debugging before assertion
+    if (!productInDb.includes(productOrderId)) {
+        console.error("ASSERTION FAILURE DEBUG:");
+        console.error("Expected value:", productOrderId);
+        console.error("Received array:", productInDb);
+        console.error("Array includes check:", productInDb.includes(productOrderId));
+    }
 
     expect(productInDb).toContain(productOrderId);
     //expect(dbData[0].productname).toBe(productOrderId);

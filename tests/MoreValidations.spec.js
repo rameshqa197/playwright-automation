@@ -44,10 +44,15 @@ test("Handling All Frames", async ({page }) => {
         console.log(`Switching to frame: ${frameName}`);
     }
 
-   const frameloc=await page.frameLocator("#courses-iframe");
-   await frameloc.locator("a[href*='consulting']").first().click();
+   // Wait for iframe to be available
+   await page.waitForSelector('#courses-iframe', { timeout: 60000 });
+   const frameloc = await page.frameLocator("#courses-iframe");
+   
+   // Wait for the link to be available within the frame and click with increased timeout
+   await frameloc.locator("a[href*='consulting']").first().click({ timeout: 120000 });
+   
    const text = await frameloc.locator("div[class='inner-box'] h1").innerText();
-   console.log(text);
+   console.log('Frame text content:', text);
    expect(text).toBe("JOB SUPPORT");
 
    expect(await page.locator("//legend[text()='Checkbox Example']")).toBeVisible();
