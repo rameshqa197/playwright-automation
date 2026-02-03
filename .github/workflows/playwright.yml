@@ -80,6 +80,8 @@ jobs:
         run: |
           export DISPLAY=:99
           export PLAYWRIGHT_HEADLESS=true
+          # Create allure-results directory if it doesn't exist
+          mkdir -p allure-results
           # Copy environment file to allure results
           cp environment.properties allure-results/ 2>/dev/null || true
           npx playwright test --reporter=line,allure-playwright
@@ -142,6 +144,14 @@ jobs:
         if: always()
         run: |
           echo "=== Creating reports navigation page ==="
+          
+          # Ensure allure-history directory exists and is writable
+          if [ -d "allure-history" ]; then
+            echo "✅ allure-history directory found"
+          else
+            echo "❌ allure-history directory not found, creating it"
+            mkdir -p allure-history
+          fi
           
           # Create the reports navigation content directly
           cat > allure-history/reports.html << 'EOF'
