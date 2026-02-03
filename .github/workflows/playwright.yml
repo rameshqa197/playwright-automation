@@ -95,9 +95,6 @@ jobs:
     needs: tests
     if: always()
 
-    env:
-      PAGES_TOKEN: ${{ secrets.PAGES_TOKEN }}
-
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -146,33 +143,46 @@ jobs:
           EOF
           touch site/.nojekyll
 
-      - name: Configure GitHub Pages (requires Pages enabled)
-        id: configure_pages_default
-        continue-on-error: true
-        uses: actions/configure-pages@v5
-
-      - name: Configure GitHub Pages (auto-enable via PAT)
-        id: configure_pages_enable
-        if: steps.configure_pages_default.outcome != 'success' && env.PAGES_TOKEN != ''
-        uses: actions/configure-pages@v5
-        with:
-          enablement: true
-          token: ${{ env.PAGES_TOKEN }}
-
-      - name: Pages not enabled (how to fix)
-        if: steps.configure_pages_default.outcome != 'success' && steps.configure_pages_enable.outcome != 'success'
+      # Preflight check: avoid running configure-pages when Pages is not enabled,
+      # because that produces the confusing "Get Pages site failed" 404.
+      - name: Check whether GitHub Pages is enabled
+        id: pages_check
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          echo "GitHub Pages is not enabled for this repository (API returned 404 for /pages)."
-          echo "Fix: Repo Settings -> Pages -> Build and deployment -> Source: GitHub Actions. Then re-run the workflow."
-          echo "Optional: create a fine-grained PAT with Pages:write + Administration:write, save as secret PAGES_TOKEN, and re-run."
+          set -euo pipefail
+          api_url="https://api.github.com/repos/${GITHUB_REPOSITORY}/pages"
+          http_code=$(curl -sS -o /dev/null -w "%{http_code}" \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            "${api_url}")
+          echo "pages_site_http_code=${http_code}" >> "$GITHUB_OUTPUT"
+          echo "Pages site check returned HTTP ${http_code}"
+
+      - name: Configure GitHub Pages
+        id: configure_pages
+        if: steps.pages_check.outputs.pages_site_http_code == '200'
+        uses: actions/configure-pages@v5
+
+      - name: GitHub Pages is not enabled (how to fix)
+        if: steps.pages_check.outputs.pages_site_http_code != '200'
+        shell: bash
+        run: |
+          echo "GitHub Pages is not enabled/configured for this repository (GET /repos/{owner}/{repo}/pages did not return 200)."
+          echo ""
+          echo "Fix (recommended):"
+          echo "  Repo Settings -> Pages -> Build and deployment -> Source: GitHub Actions"
+          echo "  Then re-run this workflow."
+          exit 1
 
       - name: Upload Pages artifact
-        if: steps.configure_pages_default.outcome == 'success' || steps.configure_pages_enable.outcome == 'success'
+        if: steps.pages_check.outputs.pages_site_http_code == '200'
         uses: actions/upload-pages-artifact@v3
         with:
           path: site
 
       - name: Deploy to GitHub Pages
-        if: steps.configure_pages_default.outcome == 'success' || steps.configure_pages_enable.outcome == 'success'
+        if: steps.pages_check.outputs.pages_site_http_code == '200'
         id: deployment
         uses: actions/deploy-pages@v4
