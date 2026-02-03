@@ -26,7 +26,7 @@ const config = {
       name: 'chromium',
       use: {
         browserName: 'chromium',
-        headless: false,
+        headless: process.env.CI === 'true' || process.env.PLAYWRIGHT_HEADLESS === 'true' ? true : false,
         video: 'retain-on-failure', // Saves video only for failed tests
         screenshot: 'only-on-failure', //on ,off,alway
         trace: 'retain-on-failure',//off,on} 
