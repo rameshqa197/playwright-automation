@@ -68,6 +68,10 @@ jobs:
     needs: tests
     if: always()
 
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
     permissions:
       contents: read
       pages: write
@@ -91,9 +95,9 @@ jobs:
           allure_history: allure-history
 
       - name: Setup GitHub Pages
+        id: setup-pages
         uses: actions/configure-pages@v4
-        with:
-          enablement: true
+        continue-on-error: true
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
