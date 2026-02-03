@@ -9,7 +9,17 @@ Test reports are automatically published to GitHub Pages after each workflow run
 
 If you don’t see the reports:
 - Open the latest GitHub Actions run → **Artifacts** and download `playwright-report` or `allure-report`, then open `index.html` inside.
-- Or ensure GitHub Pages is enabled for the repo with **Source: GitHub Actions** (Settings → Pages).
+- Or ensure GitHub Pages is enabled for the repo with **Source: GitHub Actions** (Settings → Pages → Build and deployment).
+
+### GitHub Pages enablement note
+If the workflow log shows:
+`Get Pages site failed ... Not Found ... /repos/{owner}/{repo}/pages`
+
+That means GitHub Pages is not enabled for the repository.
+
+Fix options:
+1) **Recommended (manual, one time):** Settings → Pages → Build and deployment → **Source: GitHub Actions**.
+2) **CI auto-enable (optional):** Create a fine-grained PAT with **Pages: write** and **Administration: write**, save it as repo secret **`PAGES_TOKEN`**.
 
 ## 🚀 Features
 - **Cross-browser Testing**: Chrome, Firefox, WebKit support
