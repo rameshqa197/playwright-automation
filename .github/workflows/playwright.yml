@@ -169,12 +169,10 @@ jobs:
         if: steps.pages_check.outputs.pages_site_http_code != '200'
         shell: bash
         run: |
-          echo "GitHub Pages is not enabled/configured for this repository (GET /repos/{owner}/{repo}/pages did not return 200)."
-          echo ""
-          echo "Fix (recommended):"
-          echo "  Repo Settings -> Pages -> Build and deployment -> Source: GitHub Actions"
-          echo "  Then re-run this workflow."
-          exit 1
+          echo "::warning::GitHub Pages is not enabled/configured for this repository (GET /repos/{owner}/{repo}/pages did not return 200)."
+          echo "::warning::Fix (recommended): Repo Settings -> Pages -> Build and deployment -> Source: GitHub Actions; then re-run this workflow."
+          echo "Skipping Pages deployment; reports are still uploaded as workflow artifacts."
+          exit 0
 
       - name: Upload Pages artifact
         if: steps.pages_check.outputs.pages_site_http_code == '200'
