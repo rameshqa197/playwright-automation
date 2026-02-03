@@ -46,7 +46,13 @@ jobs:
         run: |
           mkdir -p allure-results
           cp environment.properties allure-results/ 2>/dev/null || true
-          npx playwright test --reporter=line,allure-playwright
+          # Use playwright.config.js reporters (line + html + allure) so playwright-report/ is generated.
+          npx playwright test
+
+      - name: Verify Playwright HTML report exists
+        if: always()
+        run: |
+          ls -la playwright-report || true
 
       - name: Upload Playwright HTML report
         if: always()

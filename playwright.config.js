@@ -1,4 +1,4 @@
-
+/** @type {import('@playwright/test').PlaywrightTestConfig} */
 const config = {
   testDir: './tests',
   retries: 0,
@@ -12,6 +12,7 @@ const config = {
   },
 
   reporter: [
+    ['line'],
     ['html', {
       outputFolder: 'playwright-report',
       open: 'never'
@@ -57,4 +58,4 @@ const config = {
 
 };
 
-export default config;
+module.exports = config;
