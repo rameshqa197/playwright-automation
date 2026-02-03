@@ -33,7 +33,7 @@ jobs:
             echo "package-lock.json NOT found → running npm install"
             npm install
           fi
-          npx playwright install chromium
+          npx playwright install --with-deps chromium  # Added --with-deps for CI reliability
 
       - name: Verify test data (Excel)
         run: |
@@ -42,13 +42,10 @@ jobs:
           echo "Project files:"
           ls -la
           echo "Checking testdata folder:"
-          ls -la testdata || echo "testdata folder not found"
+          ls -la testdata || echo "testdata folder not found (ensure it's committed to the repo)"
 
       - name: Run Playwright tests
-        env:
-          HEADLESS: true
-          BASE_URL: https://your-app-url.com
-        run: npm run test
+        run: npx playwright test
 
       - name: Upload Playwright HTML report
         if: always()
@@ -87,7 +84,7 @@ jobs:
           path: gh-pages
 
       - name: Generate Allure Report
-        uses: simple-elf/allure-report-action@master
+        uses: simple-elf/allure-report-action@master  # Consider pinning to a tag, e.g., @v1.x
         with:
           allure_results: allure-results
           gh_pages: gh-pages
