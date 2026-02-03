@@ -141,26 +141,42 @@ jobs:
       - name: Debug directory structure
         if: always()
         run: |
-          echo "=== Current directory contents ==="
-          ls -la
+          echo "=== Current working directory ==="
+          pwd
+          echo "=== Directory contents ==="
+          ls -la . || true
           echo "=== Checking for reports-index.html ==="
-          ls -la reports-index.html 2>/dev/null || echo "reports-index.html not found"
-          echo "=== Checking allure-history directory ==="
-          ls -la allure-history/ 2>/dev/null || echo "allure-history directory not found"
+          if [ -f "reports-index.html" ]; then
+            echo "✅ reports-index.html found"
+            ls -la reports-index.html
+          else
+            echo "❌ reports-index.html NOT found"
+          fi
+          echo "=== Checking allure-history ==="
+          if [ -d "allure-history" ]; then
+            echo "✅ allure-history directory exists"
+            ls -la allure-history/ || true
+          else
+            echo "❌ allure-history directory does not exist yet"
+          fi
 
       - name: Copy reports index page
         if: always()
         run: |
-          # Ensure allure-history directory exists and has proper permissions
-          mkdir -p allure-history
-          chmod 755 allure-history
+          # Create allure-history directory if it doesn't exist
+          mkdir -p allure-history || true
           
-          # Copy the reports index page
-          cp reports-index.html allure-history/reports.html
-          chmod 644 allure-history/reports.html
+          # Copy the reports index page (create if directory doesn't exist)
+          if [ -f "reports-index.html" ]; then
+            cp reports-index.html allure-history/reports.html
+            echo "✅ Successfully copied reports-index.html to allure-history/reports.html"
+          else
+            echo "⚠️ reports-index.html not found, creating fallback"
+            echo "<html><body><h1>Reports will be available after allure generation</h1></body></html>" > allure-history/reports.html
+          fi
           
-          # List directory contents for verification
-          ls -la allure-history/
+          # Verify the file was copied
+          ls -la allure-history/ || echo "Directory listing failed"
 
       - name: Deploy Allure Report to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
