@@ -138,45 +138,100 @@ jobs:
           allure_report: allure-report
           allure_history: allure-history
 
-      - name: Debug directory structure
+      - name: Create reports navigation page
         if: always()
         run: |
-          echo "=== Current working directory ==="
-          pwd
-          echo "=== Directory contents ==="
-          ls -la . || true
-          echo "=== Checking for reports-index.html ==="
-          if [ -f "reports-index.html" ]; then
-            echo "✅ reports-index.html found"
-            ls -la reports-index.html
-          else
-            echo "❌ reports-index.html NOT found"
-          fi
-          echo "=== Checking allure-history ==="
-          if [ -d "allure-history" ]; then
-            echo "✅ allure-history directory exists"
-            ls -la allure-history/ || true
-          else
-            echo "❌ allure-history directory does not exist yet"
-          fi
-
-      - name: Copy reports index page
-        if: always()
-        run: |
-          # Create allure-history directory if it doesn't exist
-          mkdir -p allure-history || true
+          echo "=== Creating reports navigation page ==="
           
-          # Copy the reports index page (create if directory doesn't exist)
-          if [ -f "reports-index.html" ]; then
-            cp reports-index.html allure-history/reports.html
-            echo "✅ Successfully copied reports-index.html to allure-history/reports.html"
-          else
-            echo "⚠️ reports-index.html not found, creating fallback"
-            echo "<html><body><h1>Reports will be available after allure generation</h1></body></html>" > allure-history/reports.html
-          fi
+          # Create the reports navigation content directly
+          cat > allure-history/reports.html << 'EOF'
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Playwright Test Reports</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            max-width: 800px;
+            width: 90%;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+            text-align: center;
+            padding: 40px 20px;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            font-weight: 300;
+        }
+        .report-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 40px;
+        }
+        .report-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 25px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        .report-card:hover {
+            transform: translateY(-5px);
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 25px;
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎭 Playwright Test Reports</h1>
+        </div>
+        <div class="report-grid">
+            <div class="report-card">
+                <h3>📈 Allure Report</h3>
+                <p>Comprehensive test execution report</p>
+                <a href="./index.html" class="btn">View Allure Report</a>
+            </div>
+            <div class="report-card">
+                <h3>📊 Repository</h3>
+                <p>View source code and documentation</p>
+                <a href="https://github.com/rameshqa197/playwright-automation" class="btn">GitHub Repository</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+EOF
           
-          # Verify the file was copied
-          ls -la allure-history/ || echo "Directory listing failed"
+          echo "✅ Reports navigation page created successfully"
+          ls -la allure-history/ | grep -E "(reports\.html|index\.html)" || true
 
       - name: Deploy Allure Report to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
