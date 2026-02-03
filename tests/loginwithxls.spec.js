@@ -2,7 +2,7 @@ const { test } = require('@playwright/test')
 const { ExcelUtil } = require('../utils/excelUtil');
 const path = require('path');
 
-const excelFilePath = path.join(__dirname, '../testdata/testData.xlsx');
+const excelFilePath = path.join(__dirname, '../Testdata/testData.xlsx');
 const sheetName = 'loginData';
 
 const excelUtil = new ExcelUtil(excelFilePath);

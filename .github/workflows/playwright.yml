@@ -51,8 +51,8 @@ jobs:
           pwd
           echo "Project files:"
           ls -la
-          echo "Checking testdata folder:"
-          ls -la testdata || echo "testdata folder not found (ensure it's committed to the repo)"
+          echo "Checking Testdata folder:"
+          ls -la Testdata || echo "Testdata folder not found (ensure it's committed to the repo)"
 
       - name: Run Playwright tests
         run: npx playwright test
