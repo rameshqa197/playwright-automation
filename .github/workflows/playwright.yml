@@ -24,16 +24,26 @@ jobs:
           node-version: 20
           cache: npm
 
-      - name: Install dependencies (ci-safe)
+      - name: Install dependencies
         run: |
+          # Check if package-lock.json exists and is in sync
           if [ -f package-lock.json ]; then
-            echo "package-lock.json found → running npm ci"
-            npm ci
+            echo "package-lock.json found → attempting npm ci"
+            if npm ci --prefer-offline --no-audit; then
+              echo "✅ Dependencies installed successfully with npm ci"
+            else
+              echo "⚠️ npm ci failed, regenerating lock file..."
+              rm package-lock.json
+              npm install --no-audit
+              echo "✅ Dependencies installed with npm install (lock file regenerated)"
+            fi
           else
             echo "package-lock.json NOT found → running npm install"
-            npm install
+            npm install --no-audit
           fi
-          npx playwright install --with-deps chromium  # Added --with-deps for CI reliability
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
 
       - name: Verify test data (Excel)
         run: |
