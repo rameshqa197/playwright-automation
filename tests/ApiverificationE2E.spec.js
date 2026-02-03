@@ -172,6 +172,12 @@ test('E-commerce API flow: Login and Add Product with file upload', async ({ req
   // Step 2: Add Product (multipart/form-data with file upload)
   //const imagePath = path.resolve(__dirname, 'D:\PlayWrightAutomation\testfile\adidas.jpg'); // ← Put your image in a 'files' folder (or update path)
   const imagePath = path.join(process.cwd(), 'Testdata', 'adidas.jpg');
+  
+  // Check if file exists
+  if (!fs.existsSync(imagePath)) {
+    throw new Error(`File not found: ${imagePath}`);
+  }
+  
   const addProductResponse = await request.post('https://rahulshettyacademy.com/api/ecom/product/add-product', {
     headers: {
         Authorization: token
@@ -195,6 +201,14 @@ test('E-commerce API flow: Login and Add Product with file upload', async ({ req
   
   const addProductBody = await addProductResponse.json();
   console.log('Add Product Response Body:', addProductBody);
+  
+  // Better error handling and logging
+  if (!addProductResponse.ok()) {
+    console.error('API Error Details:', addProductBody);
+    console.error('Response Status:', addProductResponse.status());
+    console.error('Response Headers:', await addProductResponse.allHeaders());
+  }
+  
   expect(addProductResponse.ok()).toBeTruthy();
   console.log('Product added:', addProductBody);
 

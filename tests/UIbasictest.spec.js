@@ -91,6 +91,8 @@ test('UI basic test with child window handlers ', async ({ browser }) => {
         await documentsRequestLink.click(),
     ])
  
+    // Wait for the element to be available in child page
+    await childPage.waitForSelector('.im-para.red', { timeout: 30000 });
     const chlidpageText = await childPage.locator('.im-para.red').textContent();
     console.log(chlidpageText);
 

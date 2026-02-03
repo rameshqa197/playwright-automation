@@ -20,7 +20,9 @@ test("Alert validation and action", async ({ page }) => {
 
 test("Handling alert for confiration button(dismiss)" ,async ({page})=>{
 
-    await page.goto("https://rahulshettyacademy.com/AutomationPractice/");
+    await page.goto("https://rahulshettyacademy.com/AutomationPractice/", { timeout: 60000 });
+    await page.waitForLoadState('domcontentloaded');
+    
     page.on('dialog', async (dialog)=>{
         console.log("Alert message: "+dialog.message());
         await dialog.dismiss(); // Click Cancel on the alert
@@ -33,7 +35,9 @@ test("Handling alert for confiration button(dismiss)" ,async ({page})=>{
 
 test("Handling All Frames", async ({page }) => {
 
-    await page.goto("https://rahulshettyacademy.com/AutomationPractice/");
+    await page.goto("https://rahulshettyacademy.com/AutomationPractice/", { timeout: 60000 });
+    await page.waitForLoadState('domcontentloaded');
+    
     const frames = page.frames();
     for (const frame of frames) {
         const frameName = frame.name() || "Unnamed Frame";

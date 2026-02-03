@@ -1,7 +1,10 @@
 import { test, expect,page } from '@playwright/test';
 
 test('Handling dynamic webtable', async ({ page }) => {
-    await page.goto('https://rahulshettyacademy.com/seleniumPractise/#offers');
+    await page.goto('https://rahulshettyacademy.com/seleniumPractise/#offers', { timeout: 60000 });
+    
+    // Wait for table rows to load
+    await page.waitForSelector('tbody tr', { timeout: 30000 });
 
     const rows = page.locator('tbody tr');
     const rowCount = await rows.count();

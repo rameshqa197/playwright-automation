@@ -5,10 +5,10 @@ const config = {
   workers: 1,
 
   /* Maximum time one test can run for. */
-  timeout: 30 * 1000,
+  timeout: 60 * 1000, // Increased from 30s to 60s for CI stability
   expect: {
 
-    timeout: 5000 /* This timeout for assetion */
+    timeout: 10000 /* Increased assertion timeout from 5s to 10s */
   },
 
   reporter: [
