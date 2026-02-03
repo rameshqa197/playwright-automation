@@ -7,7 +7,9 @@ on:
     branches: [ master ]
 
 permissions:
-  contents: write
+  contents: read
+  pages: write
+  id-token: write
 
 jobs:
   tests:
@@ -26,6 +28,12 @@ jobs:
         with:
           node-version: 20
           cache: npm
+
+      - name: Setup Java (required for Allure HTML)
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
 
       - name: Install dependencies
         run: |
@@ -68,40 +76,81 @@ jobs:
           name: allure-results
           path: allure-results
 
+      - name: Generate Allure HTML report
+        if: always()
+        run: |
+          npx allure generate allure-results --clean -o allure-report
+          ls -la allure-report || true
+
+      - name: Upload Allure HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-report
+          path: allure-report
+
   allure_report:
-    name: Generate & Deploy Allure Report
+    name: Publish Reports to GitHub Pages
     runs-on: ubuntu-latest
     needs: tests
     if: always()
 
-    permissions:
-      contents: write
-      pages: write
-      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
-      - name: Download Allure results
+      - name: Download Playwright HTML report
         uses: actions/download-artifact@v4
         with:
-          name: allure-results
-          path: allure-results
+          name: playwright-report
+          path: site/playwright-report
 
-      - name: Prepare Allure directories
-        run: mkdir -p allure-history
-
-      - name: Generate Allure Report
-        uses: simple-elf/allure-report-action@master
+      - name: Download Allure HTML report
+        uses: actions/download-artifact@v4
         with:
-          allure_results: allure-results
-          allure_report: allure-report
-          allure_history: allure-history
+          name: allure-report
+          path: site/allure-report
+
+      - name: Create landing page
+        run: |
+          cat > site/index.html <<'EOF'
+          <!doctype html>
+          <html lang="en">
+            <head>
+              <meta charset="utf-8" />
+              <meta name="viewport" content="width=device-width, initial-scale=1" />
+              <title>Test Reports</title>
+              <style>
+                body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;margin:40px;line-height:1.5}
+                .card{border:1px solid #ddd;border-radius:10px;padding:16px;max-width:760px}
+                a{display:inline-block;margin:6px 0}
+                code{background:#f6f8fa;padding:2px 6px;border-radius:6px}
+              </style>
+            </head>
+            <body>
+              <h1>Automation Test Reports</h1>
+              <div class="card">
+                <p>Choose a report:</p>
+                <ul>
+                  <li><a href="./playwright-report/index.html">Playwright HTML report</a></li>
+                  <li><a href="./allure-report/index.html">Allure HTML report</a></li>
+                </ul>
+                <p>If a link 404s, confirm the workflow created <code>index.html</code> in that report folder.</p>
+              </div>
+            </body>
+          </html>
+          EOF
+          touch site/.nojekyll
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
 
       - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
-        if: always()
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: allure-history
-          enable_jekyll: false
-          allow_empty_commit: true
-          force_orphan: true
+        id: deployment
+        uses: actions/deploy-pages@v4
