@@ -68,12 +68,8 @@ jobs:
     needs: tests
     if: always()
 
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-
     permissions:
-      contents: read
+      contents: write
       pages: write
       id-token: write
 
@@ -94,16 +90,12 @@ jobs:
           allure_report: allure-report
           allure_history: allure-history
 
-      - name: Setup GitHub Pages
-        id: setup-pages
-        uses: actions/configure-pages@v4
-        continue-on-error: true
-
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: allure-history
-
       - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+        uses: peaceiris/actions-gh-pages@v4
+        if: always()
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: allure-history
+          enable_jekyll: false
+          allow_empty_commit: true
+          force_orphan: true
