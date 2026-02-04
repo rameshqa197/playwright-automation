@@ -27,6 +27,8 @@
     "AllureGenerate": "npx allure generate allure-results --clean -o allure-report",
     "AllureServe": "npx allure serve allure-results",
     "AllureOpen": "npx allure open allure-report",
+    "serve:allure": "node scripts/serve-static.cjs allure-report 8080",
+    "serve:reports": "node scripts/serve-static.cjs . 8080",
     "clean": "rimraf playwright-report test-results allure-results allure-report",
     "install:browsers": "npx playwright install --with-deps"
   },

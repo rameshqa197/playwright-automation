@@ -7,6 +7,9 @@ This repository contains a comprehensive Playwright automation testing framework
 Test reports are automatically published to GitHub Pages after each workflow run:
 - **Live Reports**: https://rameshqa197.github.io/playwright-automation/
 
+> Note: If you open an Allure report by double-clicking `allure-report/index.html` (i.e., `file://`), browsers often block the report from loading its JSON data, which looks like “blank report / 404 everywhere”.
+> Always open Allure reports via a web server (GitHub Pages, `npm run AllureOpen`, or `npm run serve:allure`).
+
 If you don’t see the reports:
 - Open the latest GitHub Actions run → **Artifacts** and download `playwright-report` or `allure-report`, then open `index.html` inside.
 - Or ensure GitHub Pages is enabled for the repo with **Source: GitHub Actions** (Settings → Pages → Build and deployment).
@@ -65,6 +68,11 @@ npm run AllureReport
 - Allure HTML report:
 	- Generate: `npm run AllureGenerate`
 	- Open: `npm run AllureOpen`
+	- Or serve the static report (recommended if you downloaded an artifact): `npm run serve:allure` then open http://127.0.0.1:8080/
+
+### Direct report URLs (GitHub Pages)
+- Allure: `https://rameshqa197.github.io/playwright-automation/allure-report/` (trailing `/` matters)
+- Playwright: `https://rameshqa197.github.io/playwright-automation/playwright-report/`
 
 ## 🤝 Contributing
 1. Fork the repository

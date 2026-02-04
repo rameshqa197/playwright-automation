@@ -57,6 +57,22 @@ jobs:
           # Use playwright.config.js reporters (line + html + allure) so playwright-report/ is generated.
           npx playwright test
 
+      - name: Verify Allure results are present
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "Allure results directory listing:"
+          ls -la allure-results || true
+          echo "Allure result JSON counts:"
+          echo "- *-result.json: $(ls -1 allure-results/*-result.json 2>/dev/null | wc -l)"
+          echo "- *-container.json: $(ls -1 allure-results/*-container.json 2>/dev/null | wc -l)"
+          # Don't fail the job here (tests may have crashed), but do emit a clear warning.
+          if ! ls -1 allure-results/*-result.json >/dev/null 2>&1; then
+            echo "::warning::No Allure *-result.json files found. The Allure HTML report will be empty/blank."
+            echo "::warning::Common causes: tests did not run, Playwright exited early, or reporter config not loaded."
+          fi
+
       - name: Verify Playwright HTML report exists
         if: always()
         run: |
@@ -111,6 +127,41 @@ jobs:
         with:
           name: allure-report
           path: site/allure-report
+
+      - name: Normalize downloaded report folders (avoid nested dirs)
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          normalize_dir() {
+            local dir="$1"
+            local nested="$2"
+
+            echo "---"
+            echo "Inspecting: ${dir}"
+            ls -la "${dir}" || true
+
+            # Some artifact combinations end up with a nested folder (e.g. site/allure-report/allure-report/index.html)
+            if [ -d "${dir}/${nested}" ] && [ -f "${dir}/${nested}/index.html" ] && [ ! -f "${dir}/index.html" ]; then
+              echo "Flattening nested folder: ${dir}/${nested} -> ${dir}"
+              shopt -s dotglob
+              mv "${dir}/${nested}"/* "${dir}/"
+              rmdir "${dir}/${nested}" || true
+            fi
+
+            echo "After normalize:"
+            ls -la "${dir}" || true
+          }
+
+          normalize_dir "site/playwright-report" "playwright-report"
+          normalize_dir "site/allure-report" "allure-report"
+
+      - name: Preflight - ensure report entrypoints exist
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f site/playwright-report/index.html || (echo "::error::Missing site/playwright-report/index.html"; exit 1)
+          test -f site/allure-report/index.html || (echo "::error::Missing site/allure-report/index.html"; exit 1)
 
       - name: Create landing page
         run: |
