@@ -4,8 +4,6 @@ const fs = require('fs');
 //test.describe.configure({mode:'parallel'});
 //test.describe.configure({mode:'serial'})
 
-
-
 test("Alert validation and action", async ({ page }) => {
 
     await page.goto("https://rahulshettyacademy.com/AutomationPractice/");
@@ -128,3 +126,13 @@ test("download file", async ({page})=>{
 })
 
 
+test("basic test", async ({ page }) => {
+   
+    // Uses baseURL from playwright.config.js (loaded from .env / .env.<env>)
+    await page.goto("/AutomationPractice/");
+    await expect(page.locator("#displayed-text")).toBeVisible();
+    //2. Capture a Specific Element Screenshot
+    await page.locator("#hide-textbox").click();
+    //3. Capture a Screenshot for full page
+    await expect(page.locator("#displayed-text")).toBeHidden();
+});
