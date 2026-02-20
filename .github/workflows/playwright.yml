@@ -3,10 +3,12 @@ name: Playwright Tests (Free Tier)
 on:
   push:
     branches: [ master ]
-    
+
 concurrency:
-  group: playwright-tests-${{ github.ref }}
-  cancel-in-progress: false
+  group: playwright-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
   test:
     name: Run Tests
     runs-on: ubuntu-latest
@@ -104,7 +106,6 @@ concurrency:
           echo "- 📋 Allure Report" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Storage Optimization:**" >> $GITHUB_STEP_SUMMARY
-          echo "- Old artifacts auto-deleted" >> $GITHUB_STEP_SUMMARY
           echo "- Large files (videos) removed" >> $GITHUB_STEP_SUMMARY
           echo "- Max retention: 1 day" >> $GITHUB_STEP_SUMMARY
           echo "- Compression: Maximum" >> $GITHUB_STEP_SUMMARY
