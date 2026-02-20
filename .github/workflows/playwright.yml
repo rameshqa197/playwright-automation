@@ -2,17 +2,10 @@ name: Playwright Tests (Free Tier)
 
 on:
   push:
-    branches:
-      - master
-    paths-ignore:
-      - '**.md'
-      - '.gitignore'
-      - 'allure-report/**'
-      - 'playwright-report/**'
-      - '.git/**'
+    branches: [ master ]
 
 concurrency:
-  group: playwright-tests
+  group: playwright-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -24,15 +17,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
-      - name: Debug - Show Workflow Trigger
-        run: |
-          echo "🔍 Workflow Debug Info:"
-          echo "Triggered by: ${{ github.event_name }}"
-          echo "Actor: ${{ github.actor }}"
-          echo "Ref: ${{ github.ref }}"
-          echo "Run number: ${{ github.run_number }}"
-          echo "Commit: ${{ github.sha }}"
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
