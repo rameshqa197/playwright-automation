@@ -63,13 +63,13 @@ jobs:
             echo "ℹ️ Playwright report will be available in artifacts"
           fi
 
-      - name: Upload Playwright Report (Only on Failure - 1 day)
-        if: failure()
+      - name: Upload Playwright Report (Always - 3 days)
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-report-failure
+          name: playwright-report
           path: playwright-report/
-          retention-days: 1
+          retention-days: 3
           if-no-files-found: ignore
           compression-level: 9
 
@@ -86,13 +86,13 @@ jobs:
             echo "⚠️  No Allure report found"
           fi
 
-      - name: Upload Allure Report (Only on Failure - 1 day)
-        if: failure()
+      - name: Upload Allure Report (Always - 3 days)
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: allure-report-failure
+          name: allure-report
           path: allure-report/
-          retention-days: 1
+          retention-days: 3
           if-no-files-found: ignore
           compression-level: 9
 
@@ -101,11 +101,21 @@ jobs:
         run: |
           echo "## 📊 Test Report Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Test Run Status:**" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Test Status: ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
+          echo "- 🔗 Run #: ${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
+          echo "- 📅 Branch: master" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Generated Reports:**" >> $GITHUB_STEP_SUMMARY
           echo "- 📈 Playwright HTML Report" >> $GITHUB_STEP_SUMMARY
           echo "- 📋 Allure Report" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Storage Optimization:**" >> $GITHUB_STEP_SUMMARY
+          echo "- Reports uploaded on all runs (Pass/Fail/Any)" >> $GITHUB_STEP_SUMMARY
           echo "- Large files (videos) removed" >> $GITHUB_STEP_SUMMARY
-          echo "- Max retention: 1 day" >> $GITHUB_STEP_SUMMARY
+          echo "- Max retention: 3 days" >> $GITHUB_STEP_SUMMARY
           echo "- Compression: Maximum" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**View Reports:**" >> $GITHUB_STEP_SUMMARY
+          echo "- 📈 Playwright Report: download from Artifacts → playwright-report" >> $GITHUB_STEP_SUMMARY
+          echo "- 📋 Allure Report: download from Artifacts → allure-report" >> $GITHUB_STEP_SUMMARY
