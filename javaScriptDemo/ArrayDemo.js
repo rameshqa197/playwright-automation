@@ -1,42 +1,37 @@
 
 let arr = [10, 20, 30, 40, 50];
 
-console.log( "Array length is: " + arr.push(60) );
-console.log( "Array after push is: " + arr );
+arr.push(60)
+console.log( "Array after push(add elements) is: " + arr );
 
-console.log( "Array length after pop is: " + arr.pop() );
-console.log( "Array after pop is: " + arr );
+arr.pop()
+console.log( "Array after pop (Removing) is: " + arr );
 
 arr.unshift(5);
-console.log( "Array after unshift is: " + arr );
+console.log( "Array after unshift(add element from starting of index) is: " + arr );
 
 arr.shift();
-console.log( "Array after shift is: " + arr );
+console.log( "Remving elemnet from starting of Array after shift is: " + arr );
 
-console.log( "Index of 30 is: " + arr.indexOf(30) );
+console.log( "Finding Index element in list is: " + arr.indexOf(30));
 
-console.log("===========================================================");
-
-console.log( "Array includes is: " + arr.includes(30) );
+console.log( "Checking exitance of Array with includes is: " + arr.includes(30) );
 
 subarray = arr.slice(1,4);
-console.log( "Subarray is: " + subarray );
-
-console.log("===========================================================");
+console.log( "SLicing of list element  is: " + subarray );
 
 
 arr.forEach((value,index)=>{
     console.log("Value at index " + index + " is: " + value);
 })
 
-console.log("=============sum of array=========================");
 
 let sum = 0;
 for( let i=0; i<arr.length; i++ ) {
    // console.log( "Iteration number: " + arr[i] );
     sum += arr[i];
 }   
-console.log( "Sum is: " + sum );
+console.log( "Sum is Array avaiable element is :: " + sum );
 
 console.log("=============reduce /File and Map Array Demo====================");
 
