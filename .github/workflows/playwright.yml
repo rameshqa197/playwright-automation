@@ -42,16 +42,7 @@ jobs:
           npx playwright test
         continue-on-error: true
 
-      - name: Clean up large test files
-        if: always()
-        run: |
-          echo "🧹 Aggressive cleanup of test artifacts..."
-          rm -rf test-results 2>/dev/null || true
-          rm -rf playwright-report 2>/dev/null || true
-          rm -rf allure-results 2>/dev/null || true
-          rm -rf allure-report 2>/dev/null || true
-          find . -type f \( -name "*.webm" -o -name "*.mp4" -o -name "*.mov" \) -delete 2>/dev/null || true
-          echo "✅ Cleanup complete"
+      # NOTE: moved cleanup to run AFTER uploads so reports are not deleted before being attached
 
       - name: Verify Playwright HTML Report
         if: always()
@@ -64,13 +55,13 @@ jobs:
             echo "ℹ️ Playwright report will be available in artifacts"
           fi
 
-      - name: Upload Playwright Report (Failures Only - 1 day)
-        if: failure()
+      - name: Upload Playwright Report (Always - 3 days)
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-report-${{ github.run_number }}
+          name: playwright-report
           path: playwright-report/
-          retention-days: 1
+          retention-days: 3
           if-no-files-found: ignore
           compression-level: 9
 
@@ -87,13 +78,13 @@ jobs:
             echo "⚠️  No Allure report found"
           fi
 
-      - name: Upload Allure Report (Failures Only - 1 day)
-        if: failure()
+      - name: Upload Allure Report (Always - 3 days)
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: allure-report-${{ github.run_number }}
+          name: allure-report
           path: allure-report/
-          retention-days: 1
+          retention-days: 3
           if-no-files-found: ignore
           compression-level: 9
 
@@ -112,11 +103,19 @@ jobs:
           echo "- 📋 Allure Report" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Storage Optimization:**" >> $GITHUB_STEP_SUMMARY
-          echo "- Reports uploaded on FAILURES ONLY" >> $GITHUB_STEP_SUMMARY
-          echo "- All test artifacts cleaned immediately" >> $GITHUB_STEP_SUMMARY
-          echo "- Max retention: 1 day" >> $GITHUB_STEP_SUMMARY
+          echo "- Reports uploaded for ALL runs (pass/fail)" >> $GITHUB_STEP_SUMMARY
+          echo "- Large files removed; reports preserved" >> $GITHUB_STEP_SUMMARY
+          echo "- Max retention: 3 days" >> $GITHUB_STEP_SUMMARY
           echo "- Compression: Maximum" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**❌ If Tests Fail:**" >> $GITHUB_STEP_SUMMARY
-          echo "- 📈 Playwright Report: Artifacts → playwright-report-${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
-          echo "- 📋 Allure Report: Artifacts → allure-report-${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
+          echo "**View Artifacts:**" >> $GITHUB_STEP_SUMMARY
+          echo "- 📈 Playwright Report: Artifacts → playwright-report" >> $GITHUB_STEP_SUMMARY
+          echo "- 📋 Allure Report: Artifacts → allure-report" >> $GITHUB_STEP_SUMMARY
+      
+      - name: Cleanup large files after upload
+        if: always()
+        run: |
+          echo "🧹 Post-upload cleanup of large artifacts..."
+          find test-results -type f \( -name "*.webm" -o -name "*.mp4" -o -name "*.mov" \) -delete 2>/dev/null || true
+          find test-results -type d -name "trace" -exec rm -rf {} + 2>/dev/null || true
+          echo "✅ Post-upload cleanup complete"
