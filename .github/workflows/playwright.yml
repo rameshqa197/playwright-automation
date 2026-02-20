@@ -42,6 +42,17 @@ jobs:
           npx playwright test
         continue-on-error: true
 
+      - name: Delete old artifacts to free storage
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          echo "🗑️ Deleting old artifacts to make room for new uploads..."
+          gh api repos/${{ github.repository }}/actions/artifacts --paginate -q '.artifacts[] | select(.name=="playwright-report" or .name=="allure-report") | .id' | while read id; do
+            gh api repos/${{ github.repository }}/actions/artifacts/$id -X DELETE 2>/dev/null && echo "Deleted artifact $id" || true
+          done
+          echo "✅ Old artifacts deleted"
+
       # NOTE: moved cleanup to run AFTER uploads so reports are not deleted before being attached
 
       - name: Verify Playwright HTML Report
@@ -55,13 +66,13 @@ jobs:
             echo "ℹ️ Playwright report will be available in artifacts"
           fi
 
-      - name: Upload Playwright Report (Always - 3 days)
+      - name: Upload Playwright Report (Always - 1 day)
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: playwright-report
           path: playwright-report/
-          retention-days: 3
+          retention-days: 1
           if-no-files-found: ignore
           compression-level: 9
 
@@ -78,13 +89,13 @@ jobs:
             echo "⚠️  No Allure report found"
           fi
 
-      - name: Upload Allure Report (Always - 3 days)
+      - name: Upload Allure Report (Always - 1 day)
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: allure-report
           path: allure-report/
-          retention-days: 3
+          retention-days: 1
           if-no-files-found: ignore
           compression-level: 9
 
@@ -103,9 +114,10 @@ jobs:
           echo "- 📋 Allure Report" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Storage Optimization:**" >> $GITHUB_STEP_SUMMARY
+          echo "- Old artifacts auto-deleted before new upload" >> $GITHUB_STEP_SUMMARY
           echo "- Reports uploaded for ALL runs (pass/fail)" >> $GITHUB_STEP_SUMMARY
           echo "- Large files removed; reports preserved" >> $GITHUB_STEP_SUMMARY
-          echo "- Max retention: 3 days" >> $GITHUB_STEP_SUMMARY
+          echo "- Max retention: 1 day" >> $GITHUB_STEP_SUMMARY
           echo "- Compression: Maximum" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**View Artifacts:**" >> $GITHUB_STEP_SUMMARY
