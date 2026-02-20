@@ -66,15 +66,17 @@ jobs:
             echo "ℹ️ Playwright report will be available in artifacts"
           fi
 
-      - name: Upload Playwright Report (Always - 1 day)
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: playwright-report
-          path: playwright-report/
-          retention-days: 1
-          if-no-files-found: ignore
-          compression-level: 9
+      # DISABLED: Artifact upload disabled due to storage quota limits
+      # Reports are generated locally and accessible via build summary
+      # - name: Upload Playwright Report (Always - 1 day)
+      #   if: always()
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: playwright-report
+      #     path: playwright-report/
+      #     retention-days: 1
+      #     if-no-files-found: ignore
+      #     compression-level: 9
 
       - name: Generate Allure Report
         if: always()
@@ -89,15 +91,17 @@ jobs:
             echo "⚠️  No Allure report found"
           fi
 
-      - name: Upload Allure Report (Always - 1 day)
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: allure-report
-          path: allure-report/
-          retention-days: 1
-          if-no-files-found: ignore
-          compression-level: 9
+      # DISABLED: Artifact upload disabled due to storage quota limits
+      # Reports are generated locally; manually download via run logs if needed
+      # - name: Upload Allure Report (Always - 1 day)
+      #   if: always()
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: allure-report
+      #     path: allure-report/
+      #     retention-days: 1
+      #     if-no-files-found: ignore
+      #     compression-level: 9
 
       - name: Test Execution Summary
         if: always()
@@ -113,12 +117,14 @@ jobs:
           echo "- 📈 Playwright HTML Report" >> $GITHUB_STEP_SUMMARY
           echo "- 📋 Allure Report" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Storage Optimization:**" >> $GITHUB_STEP_SUMMARY
-          echo "- Old artifacts auto-deleted before new upload" >> $GITHUB_STEP_SUMMARY
-          echo "- Reports uploaded for ALL runs (pass/fail)" >> $GITHUB_STEP_SUMMARY
-          echo "- Large files removed; reports preserved" >> $GITHUB_STEP_SUMMARY
-          echo "- Max retention: 1 day" >> $GITHUB_STEP_SUMMARY
-          echo "- Compression: Maximum" >> $GITHUB_STEP_SUMMARY
+          echo "**Status:**" >> $GITHUB_STEP_SUMMARY
+          echo "- ⚠️ Artifact uploads disabled (storage quota limit reached)" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Reports generated locally (playwright-report/, allure-report/)" >> $GITHUB_STEP_SUMMARY
+          echo "- 📥 To view reports: Clone repo and run 'npm run show-report'" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Local Report Paths:**" >> $GITHUB_STEP_SUMMARY
+          echo "- 📈 Playwright: ./playwright-report/index.html" >> $GITHUB_STEP_SUMMARY
+          echo "- 📋 Allure: ./allure-report/index.html" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**View Artifacts:**" >> $GITHUB_STEP_SUMMARY
           echo "- 📈 Playwright Report: Artifacts → playwright-report" >> $GITHUB_STEP_SUMMARY
