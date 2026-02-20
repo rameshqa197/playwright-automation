@@ -95,8 +95,16 @@ jobs:
       - name: Generate Allure HTML report
         if: always()
         run: |
+          echo "📊 Generating Allure report..."
           npx allure generate allure-results --clean -o allure-report
-          ls -la allure-report || true
+          
+          if [ -f allure-report/index.html ]; then
+            echo "✅ Allure report generated successfully!"
+            ls -lh allure-report/index.html
+          else
+            echo "❌ Allure report generation failed!"
+            exit 1
+          fi
 
       - name: Upload Allure HTML report
         if: always()
@@ -235,3 +243,16 @@ jobs:
         if: steps.pages_check.outputs.pages_site_http_code == '200'
         id: deployment
         uses: actions/deploy-pages@v4
+
+      - name: Report Summary
+        if: always()
+        run: |
+          echo "## 📊 Test Reports Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Reports Generated:" >> $GITHUB_STEP_SUMMARY
+          echo "- Playwright HTML Report: \`playwright-report/\`" >> $GITHUB_STEP_SUMMARY
+          echo "- Allure Report: \`allure-report/\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ -n "${{ steps.deployment.outputs.page_url }}" ]; then
+            echo "📌 GitHub Pages URL: ${{ steps.deployment.outputs.page_url }}" >> $GITHUB_STEP_SUMMARY
+          fi

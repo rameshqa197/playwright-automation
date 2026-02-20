@@ -2,10 +2,10 @@
 let arr = [10, 20, 30, 40, 50];
 
 arr.push(60)
-console.log( "Array after push(add elements) is: " + arr );
+console.log( "Array after push(add elements in last) is: " + arr );
 
 arr.pop()
-console.log( "Array after pop (Removing) is: " + arr );
+console.log( "Array after pop (Removing from last) is: " + arr );
 
 arr.unshift(5);
 console.log( "Array after unshift(add element from starting of index) is: " + arr );

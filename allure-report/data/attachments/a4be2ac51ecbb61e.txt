@@ -1,8 +1,0 @@
-[
-  'Automation 8',
-  'Automation 8',
-  'ADIDAS ORIGINAL',
-  'ZARA COAT 3',
-  'iphone 13 pro'
-]
-true

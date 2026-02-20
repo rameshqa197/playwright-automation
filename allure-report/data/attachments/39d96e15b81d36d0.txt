@@ -1,8 +1,0 @@
-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2Nzc1NTk3OGUyYjU0NDNiMWYwZDQxZDQiLCJ1c2VyRW1haWwiOiJjaGFuZDcyNzJAZ21haWwuY29tIiwidXNlck1vYmlsZSI6NDY0NTY0NTYxMSwidXNlclJvbGUiOiJjdXN0b21lciIsImlhdCI6MTc2OTg3ODM4NCwiZXhwIjoxODAxNDM1OTg0fQ.J95UFPmznz3dQEwVLBriqj2ZTB0gTtdlQX0RwrpE2ds
-{
-  orders: [ '697e3370c941646b7ac918c3' ],
-  productOrderId: [ '6960eac0c941646b7a8b3e68' ],
-  message: 'Order Placed Successfully'
-}
-697e3370c941646b7ac918c3
- chand7272@gmail.com 
