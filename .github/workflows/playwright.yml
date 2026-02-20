@@ -3,8 +3,10 @@ name: Playwright Tests (Free Tier)
 on:
   push:
     branches: [ master ]
-
-jobs:
+    
+concurrency:
+  group: playwright-tests-${{ github.ref }}
+  cancel-in-progress: false
   test:
     name: Run Tests
     runs-on: ubuntu-latest
