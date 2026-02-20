@@ -3,8 +3,6 @@ name: Playwright Tests (Free Tier)
 on:
   push:
     branches: [ master ]
-  pull_request:
-    branches: [ master ]
 
 jobs:
   test:
@@ -106,6 +104,5 @@ jobs:
           echo "**Storage Optimization:**" >> $GITHUB_STEP_SUMMARY
           echo "- Old artifacts auto-deleted" >> $GITHUB_STEP_SUMMARY
           echo "- Large files (videos) removed" >> $GITHUB_STEP_SUMMARY
-          echo "- Max retention: 3 days" >> $GITHUB_STEP_SUMMARY
-          echo "- Compression: Maximum" >> $GITHUB_STEP_SUMMARY
+          echo "- Max retention: 1 day" >> $GITHUB_STEP_SUMMARY
           echo "- Compression: Maximum" >> $GITHUB_STEP_SUMMARY
