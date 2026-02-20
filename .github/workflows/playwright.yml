@@ -44,18 +44,11 @@ jobs:
         if: always()
         run: |
           echo "🧹 Cleaning up large test files..."
-          find test-results -type f \( -name "*.webm" -o -name "*.mp4" -size +10M \) -delete 2>/dev/null || true
+          find test-results -type f \( -name "*.webm" -o -name "*.mp4" -name "*.mov" -size +5M \) -delete 2>/dev/null || true
           find test-results -type d -name "trace" -exec rm -rf {} + 2>/dev/null || true
+          find test-results -type f -name "*.patch" -delete 2>/dev/null || true
+          rm -rf test-results/* 2>/dev/null || true
           echo "✅ Cleanup complete"
-
-      - name: Delete old artifacts (storage cleanup)
-        if: always()
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          echo "🗑️  Deleting old artifacts to free storage..."
-          gh api repos/${{ github.repository }}/actions/artifacts --paginate -q '.artifacts[] | select(.name=="playwright-report" or .name=="allure-report") | .id' | xargs -I {} gh api repos/${{ github.repository }}/actions/artifacts/{} -X DELETE 2>/dev/null || true
-          echo "✅ Old artifacts deleted"
 
       - name: Verify Playwright HTML Report
         if: always()
@@ -68,11 +61,11 @@ jobs:
             echo "ℹ️ Playwright report will be available in artifacts"
           fi
 
-      - name: Upload Playwright HTML Report (1 day retention)
-        if: always()
+      - name: Upload Playwright Report (Only on Failure - 1 day)
+        if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-report
+          name: playwright-report-failure
           path: playwright-report/
           retention-days: 1
           if-no-files-found: ignore
@@ -91,11 +84,11 @@ jobs:
             echo "⚠️  No Allure report found"
           fi
 
-      - name: Upload Allure Report (1 day retention)
-        if: always()
+      - name: Upload Allure Report (Only on Failure - 1 day)
+        if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: allure-report
+          name: allure-report-failure
           path: allure-report/
           retention-days: 1
           if-no-files-found: ignore
