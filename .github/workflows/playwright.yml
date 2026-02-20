@@ -57,12 +57,16 @@ jobs:
           gh api repos/${{ github.repository }}/actions/artifacts --paginate -q '.artifacts[] | select(.name=="playwright-report" or .name=="allure-report") | .id' | head -5 | xargs -I {} gh api repos/${{ github.repository }}/actions/artifacts/{} -X DELETE 2>/dev/null || true
           echo "✅ Old artifacts deleted"
 
-      - name: Generate Playwright HTML Report
+      - name: Verify Playwright HTML Report
         if: always()
         run: |
-          echo "📊 Generating Playwright HTML report..."
-          npx playwright show-report test-results/ 2>/dev/null || \
-          echo "ℹ️ Playwright report will be available in artifacts"
+          echo "📊 Verifying Playwright HTML report..."
+          if [ -d "playwright-report" ] && [ -f "playwright-report/index.html" ]; then
+            echo "✅ Playwright report generated successfully!"
+            ls -lh playwright-report/index.html
+          else
+            echo "ℹ️ Playwright report will be available in artifacts"
+          fi
 
       - name: Upload Playwright HTML Report (3 day retention)
         if: always()
