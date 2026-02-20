@@ -45,11 +45,12 @@ jobs:
       - name: Clean up large test files
         if: always()
         run: |
-          echo "🧹 Cleaning up large test files..."
-          find test-results -type f \( -name "*.webm" -o -name "*.mp4" -name "*.mov" -size +5M \) -delete 2>/dev/null || true
-          find test-results -type d -name "trace" -exec rm -rf {} + 2>/dev/null || true
-          find test-results -type f -name "*.patch" -delete 2>/dev/null || true
-          rm -rf test-results/* 2>/dev/null || true
+          echo "🧹 Aggressive cleanup of test artifacts..."
+          rm -rf test-results 2>/dev/null || true
+          rm -rf playwright-report 2>/dev/null || true
+          rm -rf allure-results 2>/dev/null || true
+          rm -rf allure-report 2>/dev/null || true
+          find . -type f \( -name "*.webm" -o -name "*.mp4" -o -name "*.mov" \) -delete 2>/dev/null || true
           echo "✅ Cleanup complete"
 
       - name: Verify Playwright HTML Report
@@ -63,13 +64,13 @@ jobs:
             echo "ℹ️ Playwright report will be available in artifacts"
           fi
 
-      - name: Upload Playwright Report (Always - 3 days)
-        if: always()
+      - name: Upload Playwright Report (Failures Only - 1 day)
+        if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-report
+          name: playwright-report-${{ github.run_number }}
           path: playwright-report/
-          retention-days: 3
+          retention-days: 1
           if-no-files-found: ignore
           compression-level: 9
 
@@ -86,13 +87,13 @@ jobs:
             echo "⚠️  No Allure report found"
           fi
 
-      - name: Upload Allure Report (Always - 3 days)
-        if: always()
+      - name: Upload Allure Report (Failures Only - 1 day)
+        if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: allure-report
+          name: allure-report-${{ github.run_number }}
           path: allure-report/
-          retention-days: 3
+          retention-days: 1
           if-no-files-found: ignore
           compression-level: 9
 
@@ -111,11 +112,11 @@ jobs:
           echo "- 📋 Allure Report" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Storage Optimization:**" >> $GITHUB_STEP_SUMMARY
-          echo "- Reports uploaded on all runs (Pass/Fail/Any)" >> $GITHUB_STEP_SUMMARY
-          echo "- Large files (videos) removed" >> $GITHUB_STEP_SUMMARY
-          echo "- Max retention: 3 days" >> $GITHUB_STEP_SUMMARY
+          echo "- Reports uploaded on FAILURES ONLY" >> $GITHUB_STEP_SUMMARY
+          echo "- All test artifacts cleaned immediately" >> $GITHUB_STEP_SUMMARY
+          echo "- Max retention: 1 day" >> $GITHUB_STEP_SUMMARY
           echo "- Compression: Maximum" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**View Reports:**" >> $GITHUB_STEP_SUMMARY
-          echo "- 📈 Playwright Report: download from Artifacts → playwright-report" >> $GITHUB_STEP_SUMMARY
-          echo "- 📋 Allure Report: download from Artifacts → allure-report" >> $GITHUB_STEP_SUMMARY
+          echo "**❌ If Tests Fail:**" >> $GITHUB_STEP_SUMMARY
+          echo "- 📈 Playwright Report: Artifacts → playwright-report-${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
+          echo "- 📋 Allure Report: Artifacts → allure-report-${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY

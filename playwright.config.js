@@ -28,9 +28,9 @@ const config = {
       use: {
         browserName: 'chromium',
         headless: process.env.CI === 'true' || process.env.PLAYWRIGHT_HEADLESS === 'true' ? true : false,
-        video: 'retain-on-failure', // Saves video only for failed tests
+        video: 'off', // Disabled to save storage
         screenshot: 'only-on-failure', //on ,off,alway
-        trace: 'retain-on-failure',//off,on} 
+        trace: 'off', // Disabled to save storage
       }
     },
     /*{ 
