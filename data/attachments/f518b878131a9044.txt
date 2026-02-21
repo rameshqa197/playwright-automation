@@ -1,9 +1,0 @@
-Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2Nzc1NTk3OGUyYjU0NDNiMWYwZDQxZDQiLCJ1c2VyRW1haWwiOiJjaGFuZDcyNzJAZ21haWwuY29tIiwidXNlck1vYmlsZSI6NDY0NTY0NTYxMSwidXNlclJvbGUiOiJjdXN0b21lciIsImlhdCI6MTc3MTY5MjkyMywiZXhwIjoxODAzMjUwNTIzfQ.0lLoUQw-1OHk62nK_minjtLTnPsVPsKsXycOa5OcpGE
-Product names found: [ 'ADIDAS ORIGINAL', 'ZARA COAT 3' ]
-Checking for ADIDAS ORIGINAL in: [ 'ADIDAS ORIGINAL', 'ZARA COAT 3' ]
-Checking for ZARA COAT 3 in: [ 'ADIDAS ORIGINAL', 'ZARA COAT 3' ]
-Unique product names count: 2
-Product names found: [ 'ADIDAS ORIGINAL', 'ZARA COAT 3' ]
-Checking for ADIDAS ORIGINAL in: [ 'ADIDAS ORIGINAL', 'ZARA COAT 3' ]
-Checking for ZARA COAT 3 in: [ 'ADIDAS ORIGINAL', 'ZARA COAT 3' ]
-Unique product names count: 2
