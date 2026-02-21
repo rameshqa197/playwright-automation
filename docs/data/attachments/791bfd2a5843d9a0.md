@@ -1,0 +1,62 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - navigation [ref=e5]:
+    - link "ProtoCommerce" [ref=e6] [cursor=pointer]:
+      - /url: "#"
+    - list [ref=e7]:
+      - listitem [ref=e8]:
+        - link "Home" [ref=e9] [cursor=pointer]:
+          - /url: /angularpractice
+      - listitem [ref=e10]:
+        - link "Shop" [ref=e11] [cursor=pointer]:
+          - /url: /angularpractice/shop
+  - generic [ref=e12]:
+    - generic [ref=e13]:
+      - generic [ref=e15]:
+        - heading "Protractor Tutorial" [level=1] [ref=e16]
+        - heading "by QAClick Academy" [level=4] [ref=e17]
+        - heading "This is a demo eCommerce web appplication developed using Angular 5 to help QAClick Academy students learn Protractor framework for testing Angular applications." [level=5] [ref=e18]
+        - heading "Be assured that product you ordered in this site will never arrive, Instead we hope your takeaway will be in learning Protractor!" [level=6] [ref=e19]:
+          - text: Be assured that product you ordered in this site will never arrive, Instead we hope your takeaway
+          - text: will be in learning Protractor!
+      - generic [ref=e20]:
+        - generic [ref=e21]:
+          - generic [ref=e22]: Name
+          - textbox [ref=e23]
+        - generic [ref=e24]:
+          - generic [ref=e25]: Email
+          - textbox [ref=e26]
+        - generic [ref=e27]:
+          - generic [ref=e28]: Password
+          - textbox "Password" [ref=e29]
+        - generic [ref=e30]:
+          - checkbox "Check me out if you Love IceCreams!" [checked] [active] [ref=e31]
+          - generic [ref=e32]: Check me out if you Love IceCreams!
+        - generic [ref=e33]:
+          - generic [ref=e34]: Gender
+          - combobox "Gender" [ref=e35]:
+            - option "Male" [selected]
+            - option "Female"
+        - generic [ref=e36]:
+          - generic [ref=e37]: "Employment Status:"
+          - generic [ref=e38]:
+            - radio "Student" [ref=e39]
+            - generic [ref=e40]: Student
+          - generic [ref=e41]:
+            - radio "Employed" [ref=e42]
+            - generic [ref=e43]: Employed
+          - generic [ref=e44]:
+            - radio "Entrepreneur (disabled)" [disabled] [ref=e45]
+            - generic [ref=e46]: Entrepreneur (disabled)
+        - generic [ref=e47]:
+          - generic [ref=e48]: Date of Birth
+          - textbox [ref=e49]
+        - button "Submit" [ref=e50] [cursor=pointer]
+      - heading "Two-way Data Binding example:" [level=4] [ref=e51]:
+        - text: "Two-way Data Binding example:"
+        - textbox [ref=e52]
+    - contentinfo [ref=e53]:
+      - paragraph [ref=e55]: Copyright © ProtoCommerce 2018
+```

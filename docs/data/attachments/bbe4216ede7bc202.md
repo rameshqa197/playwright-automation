@@ -1,0 +1,61 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - navigation [ref=e5]:
+      - generic [ref=e7]:
+        - link "Automation Automation Practice":
+          - /url: ""
+          - generic [ref=e8] [cursor=pointer]:
+            - heading "Automation" [level=3] [ref=e9]
+            - paragraph [ref=e10]: Automation Practice
+      - text: 
+      - list [ref=e11]:
+        - listitem [ref=e12] [cursor=pointer]:
+          - button " HOME" [ref=e13]:
+            - generic [ref=e14]: 
+            - text: HOME
+        - listitem
+        - listitem [ref=e15] [cursor=pointer]:
+          - button " ORDERS" [ref=e16]:
+            - generic [ref=e17]: 
+            - text: ORDERS
+        - listitem [ref=e18] [cursor=pointer]:
+          - button " Cart 1" [ref=e19]:
+            - generic [ref=e20]: 
+            - text: Cart
+            - generic [ref=e21]: "1"
+        - listitem [ref=e22] [cursor=pointer]:
+          - button "Sign Out" [ref=e23]:
+            - generic [ref=e24]: 
+            - text: Sign Out
+    - generic [ref=e25]:
+      - generic [ref=e26]:
+        - heading "My Cart" [level=1] [ref=e27]
+        - button "Continue Shopping❯" [ref=e28] [cursor=pointer]
+      - list [ref=e30]:
+        - listitem [ref=e31] [cursor=pointer]:
+          - generic [ref=e32]:
+            - generic [ref=e33]:
+              - paragraph [ref=e34]: "#6960eac0c941646b7a8b3e68"
+              - heading "ZARA COAT 3" [level=3] [ref=e35]
+              - paragraph [ref=e36]: MRP $ 11500
+              - paragraph [ref=e37]: In Stock
+            - paragraph [ref=e39]: $ 11500
+            - generic [ref=e40]:
+              - button "Buy Now❯" [ref=e41]
+              - button "❯" [ref=e42]:
+                - generic [ref=e43]: 
+                - text: ❯
+      - list [ref=e45]:
+        - listitem [ref=e46]:
+          - generic [ref=e47]: Subtotal
+          - generic [ref=e48]: $11500
+        - listitem [ref=e49]:
+          - generic [ref=e50]: Total
+          - generic [ref=e51]: $11500
+        - listitem [ref=e52]:
+          - button "Checkout❯" [ref=e53] [cursor=pointer]
+  - alert "Product Added To Cart" [ref=e55]
+```

@@ -1,0 +1,19 @@
+This is before each test
+[
+  'Automation 8',
+  'Automation 8',
+  'ADIDAS ORIGINAL',
+  'ZARA COAT 3',
+  'iphone 13 pro'
+]
+697ec09cc941646b7ac9cdc9
+Product order details:  6960eac0c941646b7a8b3e68
+Order Placed Successfully
+DB Data is :  [
+  { productname: '6960eac0c941646b7a8b3e68' },
+  { productname: '6960eac0c941646b7a8b3e60' }
+]
+Product in DB:  [ '6960eac0c941646b7a8b3e68', '6960eac0c941646b7a8b3e60' ]
+This is after each test
+Product order Id are ::  697ec09cc941646b7ac9cdc9
+This is after all tests
