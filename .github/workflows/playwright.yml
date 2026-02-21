@@ -62,3 +62,4 @@ jobs:
           echo "## 📊 Test Execution Summary" >> $GITHUB_STEP_SUMMARY
           echo "- ✅ Status: ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
           echo "- 🔗 Allure Report: https://${OWNER}.github.io/${REPO}/" >> $GITHUB_STEP_SUMMARY
+          
