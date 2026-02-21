@@ -13,6 +13,9 @@ jobs:
     name: Run Tests
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    permissions:
+      contents: read
+      pages: write
 
     steps:
       - name: Checkout code
@@ -42,18 +45,7 @@ jobs:
           npx playwright test
         continue-on-error: true
 
-      - name: Delete old artifacts to free storage
-        if: always()
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          echo "🗑️ Deleting old artifacts to make room for new uploads..."
-          gh api repos/${{ github.repository }}/actions/artifacts --paginate -q '.artifacts[] | select(.name=="playwright-report" or .name=="allure-report") | .id' | while read id; do
-            gh api repos/${{ github.repository }}/actions/artifacts/$id -X DELETE 2>/dev/null && echo "Deleted artifact $id" || true
-          done
-          echo "✅ Old artifacts deleted"
-
-      # NOTE: moved cleanup to run AFTER uploads so reports are not deleted before being attached
+      # NOTE: artifact deletion removed - deploying Allure to GitHub Pages instead
 
       - name: Verify Playwright HTML Report
         if: always()
@@ -91,17 +83,16 @@ jobs:
             echo "⚠️  No Allure report found"
           fi
 
-      # DISABLED: Artifact upload disabled due to storage quota limits
-      # Reports are generated locally; manually download via run logs if needed
-      # - name: Upload Allure Report (Always - 1 day)
-      #   if: always()
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: allure-report
-      #     path: allure-report/
-      #     retention-days: 1
-      #     if-no-files-found: ignore
-      #     compression-level: 9
+      # Publish Allure report to GitHub Pages for easy viewing
+      - name: Upload Allure report to Pages artifact
+        if: always()
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: ./allure-report
+
+      - name: Deploy Allure report to GitHub Pages
+        if: always()
+        uses: actions/deploy-pages@v1
 
       - name: Test Execution Summary
         if: always()
