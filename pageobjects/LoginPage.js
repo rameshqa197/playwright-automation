@@ -16,7 +16,7 @@ class LoginPage {
     }
 
     async navigate(url) {
-        await this.page.goto('https://rahulshettyacademy.com/client');
+        await this.page.goto(process.env.BASE_URL);
     }
 }
 

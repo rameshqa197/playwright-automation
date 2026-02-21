@@ -26,6 +26,7 @@ test('@API Network call for abort and print all API request and reponse status',
         // await route.abort('accessdenied');
     });
     await page.locator("button[routerlink*='myorders']").click();
+    await page.close()
 
 
 })

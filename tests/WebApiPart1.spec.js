@@ -18,9 +18,14 @@ test.beforeAll(async () => {
 
 test('WebAPi Itegration with Login and order details !!', async ({ page }) => {
 
-    page.addInitScript(value => {
+    console.log(response.token)
+    console.log(response.orderId);
+
+    await page.addInitScript(value => {
         window.localStorage.setItem('token', value)}, response.token    
     );
+
+    
 
     const products = page.locator('.card-body')
     const productName = "ZARA COAT 3";

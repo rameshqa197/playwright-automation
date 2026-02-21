@@ -15,7 +15,7 @@ loginData.forEach((data, index) => {
 
         try {
 
-            await page.goto('https://rahulshettyacademy.com/client');
+            await page.goto(process.env.BASE_URL)
             await page.locator('#userEmail').fill(data.userName);
             await page.locator('#userPassword').fill(data.Password);
             await page.getByRole('button', { name: 'Login' }).click();

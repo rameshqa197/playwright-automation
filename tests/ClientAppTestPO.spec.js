@@ -2,21 +2,16 @@ const { test, expect } = require('@playwright/test')
 const {POManager} = require('../pageobjects/POManager');
 
 
-test('Client App test', async ({ browser }) => {
+test('Client App test', async ({ page }) => {
 
-    const context = await browser.newContext();
-    const page = await context.newPage();
-   
-   
     const productName = "ZARA COAT 3";
     const emailid = "chand7272@gmail.com";
-    const password = 'Ramesh#12345';
-
+    
     const poManager = new POManager(page)
     const loginPage = poManager.getLoginPage();
 
     await loginPage.navigate();
-    await loginPage.ApplicationLogin(emailid, password);
+    await loginPage.ApplicationLogin(process.env.USER_EMAIL, process.env.USER_PASSWORD);
 
    // await page.waitForLoadState('networkidle');
 
@@ -34,7 +29,7 @@ test('Client App test', async ({ browser }) => {
     await ordersReviewPage.SelectExpiryDate("12", "29");
     await ordersReviewPage.FillCardDetails('1234','Ramesh Kumar');
     await ordersReviewPage.ApplyCoponAndVerify('rahulshettyacademy');
-    await ordersReviewPage.VerifyEmailId(emailid);
+    await ordersReviewPage.VerifyEmailId(process.env.USER_EMAIL);
 
     const orderId = await ordersReviewPage.SubmitAndGetOrderId();
     console.log(orderId);

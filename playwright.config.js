@@ -1,8 +1,31 @@
 /** @type {import('@playwright/test').PlaywrightTestConfig} */
+
+const dotenv = require('dotenv');
+
+// ✅ Read environment from CLI (--env=qa)
+const envFromCLI = process.argv.find(arg => arg.startsWith('--env='));
+
+// ✅ Read environment from CI variable
+const envFromSystem = process.env.TEST_ENV;
+
+// ✅ Final environment resolution priority
+const environment =
+  envFromCLI?.split('=')[1] ||
+  envFromSystem ||
+  'dev'; // default
+
+// ✅ Load correct .env file
+dotenv.config({ path: `.env.${environment}` });
+
+console.log(`\n Running tests on environment: ${environment}`);
+console.log(`🔗 Base URL: ${process.env.BASE_URL}\n`);
+
+
+
 const config = {
   testDir: './tests',
   retries: 0,
-  workers: 1,
+  workers: 4,
 
   /* Maximum time one test can run for. */
   timeout: 60 * 1000, // Increased from 30s to 60s for CI stability
@@ -25,6 +48,7 @@ const config = {
   projects: [
     {
       name: 'chromium',
+      baseURL: process.env.BASE_URL, // ✅ Dynamic baseURL from environment
       use: {
         browserName: 'chromium',
         headless: process.env.CI === 'true' || process.env.PLAYWRIGHT_HEADLESS === 'true' ? true : false,

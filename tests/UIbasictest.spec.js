@@ -8,7 +8,7 @@ test('Ui basic test with login', async ({ browser }) => {
     const userName = page.locator('#username')
     const password = page.locator('#password')
     const signInBtn = page.locator('#signInBtn')
-    const passwordLoc= page.locator('b:nth-child(2) i:nth-child(1)')
+    const passwordLoc = page.locator('b:nth-child(2) i:nth-child(1)')
     await page.goto('https://rahulshettyacademy.com/loginpagePractise/')
     await userName.fill('rahulshettyacademy');
     await password.fill('learning1');
@@ -26,6 +26,7 @@ test('Ui basic test with login', async ({ browser }) => {
 
     const allTexts = await page.locator(".card-body a").allTextContents();
     console.log(allTexts);
+    await page.close();
 
 })
 
@@ -43,11 +44,11 @@ test('Ui basic test with more fields validation', async ({ browser }) => {
     const optionConfirm = page.locator(".btn-success")
     const dropdownSelection = page.locator("select[class='form-control']")
     const termsCheckbox = page.locator("#terms")
-    const passwordLoc= page.locator('b:nth-child(2) i:nth-child(1)')
+    const passwordLoc = page.locator('b:nth-child(2) i:nth-child(1)')
 
     await page.goto('https://rahulshettyacademy.com/loginpagePractise/')
     await userName.fill('rahulshettyacademy');
-   await password.fill(await passwordLoc.textContent());
+    await password.fill(await passwordLoc.textContent());
     await radioUser.last().click();
     await optionConfirm.click();
     await expect(radioUser.last()).toBeChecked();
@@ -61,11 +62,12 @@ test('Ui basic test with more fields validation', async ({ browser }) => {
 
 
     await signInBtn.click();
-    
+
     //await page.waitForLoadState('networkidle');
     await page.waitForSelector(".card-body a");
     const allTexts = await page.locator(".card-body a").allTextContents();
     console.log(allTexts);
+    await page.close();
 
 })
 
@@ -76,7 +78,7 @@ test('UI basic test with child window handlers ', async ({ browser }) => {
     const userName = page.locator('#username')
     const password = page.locator('#password')
 
-    const passwordLoc= page.locator('b:nth-child(2) i:nth-child(1)')
+    const passwordLoc = page.locator('b:nth-child(2) i:nth-child(1)')
 
     const documentsRequestLink = page.locator('[href *= "documents-request"]');
     await page.goto('https://rahulshettyacademy.com/loginpagePractise/')
@@ -85,12 +87,12 @@ test('UI basic test with child window handlers ', async ({ browser }) => {
     await expect(documentsRequestLink).toBeVisible();
 
 
-     //resolve ,Rejected and Pendinng promises
+    //resolve ,Rejected and Pendinng promises
     const [childPage] = await Promise.all([
         context.waitForEvent('page'),
         await documentsRequestLink.click(),
     ])
- 
+
     // Wait for the element to be available in child page
     await childPage.waitForSelector('.im-para.red', { timeout: 30000 });
     const chlidpageText = await childPage.locator('.im-para.red').textContent();
@@ -105,7 +107,7 @@ test('UI basic test with child window handlers ', async ({ browser }) => {
     // Bring parent to front
     await page.bringToFront();
 
-// Debug: check URL
+    // Debug: check URL
     console.log('Parent URL:', page.url());
 
     await userName.fill(domainName.split(".")[0]);
@@ -122,24 +124,24 @@ test('UI basic test with child window handlers ', async ({ browser }) => {
     await expect(homepage).toBe('ProtoCommerce');
 
 
-     await page.waitForSelector(".card-body a");
+    await page.waitForSelector(".card-body a");
     const allTexts = await page.locator(".card-body a").allTextContents();
     console.log(allTexts);
 
-
+    await page.close();
 
 });
 
 
-test("Mutltile windows handlers", async ({browser})=>{
+test("Mutltile windows handlers", async ({ browser }) => {
     const context = await browser.newContext();
     const page = await context.newPage();
-    await page.goto('https://rahulshettyacademy.com/AutomationPractice/');  
+    await page.goto('https://rahulshettyacademy.com/AutomationPractice/');
 
     // Listen for new page event
     const [newPage] = await Promise.all([
         context.waitForEvent('page'),
-        page.locator('#openwindow').click()       
+        page.locator('#openwindow').click()
     ])
 
     await newPage.locator('body').waitFor();
@@ -151,16 +153,18 @@ test("Mutltile windows handlers", async ({browser})=>{
     console.log(await page.title());
     console.log(await page.url());
 
+    await page.close();
+
 })
 
 test('dropdown handling', async ({ page }) => {
     await page.goto("https://rahulshettyacademy.com/AutomationPractice/");
-    const dropdown = page.locator('#dropdown-class-example'); 
-   // await dropdown.selectOption('option2');
+    const dropdown = page.locator('#dropdown-class-example');
+    // await dropdown.selectOption('option2');
     await dropdown.selectOption({ label: 'Option2' });
     console.log(await dropdown.inputValue());
     expect(await dropdown.inputValue()).toBe('option2');
 
     await page.locator('input[name="radioButton"][value="radio1"]').check();
-    
+
 });     

@@ -15,7 +15,7 @@ test.beforeAll(async () => {
 
 test(' @API WebAPi Itegration with Login and order details !!', async ({ page }) => {
 
-    page.addInitScript(value => {
+    await page.addInitScript(value => {
         window.localStorage.setItem('token', value)}, response.token    
     );
 
@@ -23,7 +23,7 @@ test(' @API WebAPi Itegration with Login and order details !!', async ({ page })
     const productName = "ZARA COAT 3";
     const emailid = "chand7272@gmail.com";
 
-    await page.goto('https://rahulshettyacademy.com/client')
+    await page.goto(process.env.BASE_URL)
     await products.first().waitFor()
     console.log(response.orderId);
 

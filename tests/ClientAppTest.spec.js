@@ -1,10 +1,6 @@
 const { test, expect } = require('@playwright/test')
 
-
-test('Client App test without PO', async ({ browser }) => {
-
-    const context = await browser.newContext();
-    const page = await context.newPage();
+test('Client App test without PO Test', async ({ page }) => {
     const userName = page.locator('#userEmail')
     const password = page.locator('#userPassword')
     const signInBtn = page.locator('#login')
@@ -12,11 +8,11 @@ test('Client App test without PO', async ({ browser }) => {
     const productName = "ZARA COAT 3";
     const cartOption = page.locator('[routerlink*="cart"]');
 
-    const emailid = "chand7272@gmail.com";
 
-    await page.goto('https://rahulshettyacademy.com/client')
-    await userName.fill(emailid);
-    await password.fill('Ramesh#12345');
+
+    await page.goto(process.env.BASE_URL)
+    await userName.fill(process.env.USER_EMAIL);
+    await password.fill(process.env.USER_PASSWORD);
     await signInBtn.click();
 
     //await page.waitForLoadState('networkidle');
@@ -55,7 +51,7 @@ test('Client App test without PO', async ({ browser }) => {
         }
     }
 
-    await expect(page.locator('label[type="text"]')).toHaveText(emailid);
+    await expect(page.locator('label[type="text"]')).toHaveText(process.env.USER_EMAIL);
     
     await page.locator('(//input[@type="text"])[2]').fill('1234');
     await page.locator('(//input[@type="text"])[3]').fill('12345678901234');
@@ -95,12 +91,10 @@ test('Client App test without PO', async ({ browser }) => {
     
     const DeliveryAddress= await page.locator('p.text').nth(2).textContent();
     console.log(DeliveryAddress);
-    expect(DeliveryAddress.includes(emailid)).toBeTruthy();
+    expect(DeliveryAddress.includes(process.env.USER_EMAIL)).toBeTruthy();
     
     const expectProd= await page.locator(".title").textContent();
     expect(expectProd.trim()).toBe(productName);
-
-
 
 
 
