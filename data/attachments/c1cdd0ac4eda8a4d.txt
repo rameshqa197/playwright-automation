@@ -1,9 +1,0 @@
-Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2Nzc1NTk3OGUyYjU0NDNiMWYwZDQxZDQiLCJ1c2VyRW1haWwiOiJjaGFuZDcyNzJAZ21haWwuY29tIiwidXNlck1vYmlsZSI6NDY0NTY0NTYxMSwidXNlclJvbGUiOiJjdXN0b21lciIsImlhdCI6MTc3MDA0MDk4MywiZXhwIjoxODAxNTk4NTgzfQ.Wcr380J6Q11PXPN2jtXiw8Vql5590sxLDIoeFxX9N8U
-Product names found: [ 'Automation 8', 'Automation 8', 'ADIDAS ORIGINAL', 'ZARA COAT 3' ]
-Unique product names count: 3
-Product names found: [ 'Automation 8', 'Automation 8', 'ADIDAS ORIGINAL', 'ZARA COAT 3' ]
-Unique product names count: 3
-Product names found: [ 'Automation 8', 'Automation 8', 'ADIDAS ORIGINAL', 'ZARA COAT 3' ]
-Unique product names count: 3
-Product names found: [ 'Automation 8', 'Automation 8', 'ADIDAS ORIGINAL', 'ZARA COAT 3' ]
-Unique product names count: 3

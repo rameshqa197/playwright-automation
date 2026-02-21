@@ -1,2 +1,0 @@
-Total rows: 5
-✅ Product: Potato, Price: 34

@@ -1,8 +1,0 @@
-[
-  'Automation 8',
-  'Automation 8',
-  'ADIDAS ORIGINAL',
-  'ZARA COAT 3',
-  'iphone 13 pro'
-]
- | 6980b1dec941646b7acde83b | 
