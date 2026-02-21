@@ -83,16 +83,15 @@ jobs:
             echo "⚠️  No Allure report found"
           fi
 
-      # Publish Allure report to GitHub Pages for easy viewing
-      - name: Upload Allure report to Pages artifact
+      # Publish Allure report to GitHub Pages using gh-pages branch (avoids upload-artifact v3)
+      - name: Deploy Allure report to gh-pages via peaceiris
         if: always()
-        uses: actions/upload-pages-artifact@v1
+        uses: peaceiris/actions-gh-pages@v3
         with:
-          path: ./allure-report
-
-      - name: Deploy Allure report to GitHub Pages
-        if: always()
-        uses: actions/deploy-pages@v1
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./allure-report
+          publish_branch: gh-pages
+          publish_repo: ${{ github.repository }}
 
       - name: Verify Pages deployment and add URL to summary
         if: always()
