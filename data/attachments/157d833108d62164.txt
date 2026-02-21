@@ -1,0 +1,5 @@
+Total Rows: 4
+
+1 | Chais | 1 | 18
+2 | Chang | 1 | 19
+3 | Aniseed Syrup | 2 | 10

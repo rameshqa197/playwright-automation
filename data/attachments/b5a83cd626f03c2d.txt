@@ -1,0 +1,9 @@
+Add Product Response Body: {
+  productId: '697ecd18c941646b7ac9df62',
+  message: 'Product Added Successfully'
+}
+Product added: {
+  productId: '697ecd18c941646b7ac9df62',
+  message: 'Product Added Successfully'
+}
+Delete Product Response Body: { message: 'Product Deleted Successfully' }
