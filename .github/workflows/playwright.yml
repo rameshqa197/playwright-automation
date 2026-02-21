@@ -43,9 +43,16 @@ jobs:
 
       - name: Generate Allure Report
         if: always()
-        run: npx allure generate allure-results --clean -o allure-report
+        run: |
+          if [ -d "allure-results" ]; then
+            npx allure generate allure-results --clean -o allure-report
+          else
+            echo "<h1>No Allure Results Found</h1>" > index.html
+            mkdir allure-report
+            mv index.html allure-report/
+          fi
 
-      - name: Deploy Allure to gh-pages
+      - name: Deploy to gh-pages
         if: always()
         uses: peaceiris/actions-gh-pages@v3
         with:
@@ -62,4 +69,3 @@ jobs:
           echo "## 📊 Test Execution Summary" >> $GITHUB_STEP_SUMMARY
           echo "- ✅ Status: ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
           echo "- 🔗 Allure Report: https://${OWNER}.github.io/${REPO}/" >> $GITHUB_STEP_SUMMARY
-          
