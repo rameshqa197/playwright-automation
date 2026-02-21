@@ -1,4 +1,4 @@
-const console = require('node:console');
+
 const { userdemo } = require('./classDemo')
 
 class classItergrationDemo extends userdemo {

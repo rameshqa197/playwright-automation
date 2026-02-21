@@ -21,8 +21,6 @@ for(let i=0; i<50;i++){
 
 
 
-
-
 function addNum(a,b){
     return a+b
 }

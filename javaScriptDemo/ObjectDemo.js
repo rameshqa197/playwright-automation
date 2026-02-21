@@ -16,7 +16,7 @@ const person = {
     }
 }
 console.log(person.completeInfo());
-
+console.log(person.NameCityInfo())
 console.log(person.userName)
 
 person.age = 40
