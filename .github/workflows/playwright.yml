@@ -10,7 +10,6 @@ concurrency:
 
 permissions:
   contents: write
-  pages: write
 
 jobs:
   test:
@@ -25,7 +24,6 @@ jobs:
           node-version: 20
           cache: npm
 
-      # Required only if using Allure
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -47,79 +45,16 @@ jobs:
         if: always()
         run: npx allure generate allure-results --clean -o allure-report
 
-      - name: Publish Allure to docs/ on default branch
-        if: always()
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          set -e
-          BRANCH=${GITHUB_REF#refs/heads/}
-          echo "Publishing Allure to $BRANCH/docs"
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git fetch origin $BRANCH
-          git checkout $BRANCH
-          rm -rf docs
-          mkdir -p docs
-          cp -r allure-report/* docs/
-          git add docs
-          git commit -m "chore: update Allure docs [skip ci]" || echo "No changes to commit"
-          git push "https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}" HEAD:$BRANCH
-
-      - name: Deploy Allure to GitHub Pages
+      - name: Deploy Allure to gh-pages
         if: always()
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./allure-report
           publish_branch: gh-pages
+          force_orphan: true
 
-      - name: Ensure Pages source set to gh-pages
-        if: always()
-        run: |
-          OWNER="${GITHUB_REPOSITORY%%/*}"
-          REPO="${GITHUB_REPOSITORY#*/}"
-          echo "Configuring Pages source to gh-pages for $OWNER/$REPO"
-          curl -s -X PUT \
-            -H "Accept: application/vnd.github+json" \
-            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-            https://api.github.com/repos/${OWNER}/${REPO}/pages \
-            -d '{"source":{"branch":"gh-pages","path":"/"}}' || echo "Pages config API call failed"
-
-      - name: Verify gh-pages branch contents
-        if: always()
-        run: |
-          OWNER="${GITHUB_REPOSITORY%%/*}"
-          REPO="${GITHUB_REPOSITORY#*/}"
-          echo "Listing top-level files on gh-pages branch:"
-          curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" "https://api.github.com/repos/${OWNER}/${REPO}/contents?ref=gh-pages" | jq -r '.[] | .name + "\t" + (.type // "")' || true
-          echo "Checking for index.html presence:"
-          curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" "https://api.github.com/repos/${OWNER}/${REPO}/contents/index.html?ref=gh-pages" | jq -r '.name // "missing"' || true
-
-      - name: Poll Pages URL until available
-        if: always()
-        run: |
-          OWNER="${GITHUB_REPOSITORY%%/*}"
-          REPO="${GITHUB_REPOSITORY#*/}"
-          PAGES_URL="https://${OWNER}.github.io/${REPO}/"
-          echo "Polling $PAGES_URL"
-          ok=0
-          for i in {1..12}; do
-            status=$(curl -s -o /dev/null -w "%{http_code}" "$PAGES_URL" || echo "000")
-            echo "Attempt $i: HTTP $status"
-            if [ "$status" = "200" ]; then
-              ok=1
-              break
-            fi
-            sleep 5
-          done
-          if [ "$ok" -ne 1 ]; then
-            echo "Pages not available yet (still may be deploying)"
-          else
-            echo "Pages live: $PAGES_URL"
-          fi
-
-      - name: Add Report Link to Summary
+      - name: Add Report Link
         if: always()
         run: |
           OWNER="${GITHUB_REPOSITORY%%/*}"
