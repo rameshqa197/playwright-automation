@@ -94,6 +94,32 @@ jobs:
         if: always()
         uses: actions/deploy-pages@v1
 
+      - name: Verify Pages deployment and add URL to summary
+        if: always()
+        run: |
+          echo "🔎 Constructing GitHub Pages URL..."
+          OWNER="${GITHUB_REPOSITORY%%/*}"
+          REPO="${GITHUB_REPOSITORY#*/}"
+          PAGES_URL="https://${OWNER}.github.io/${REPO}/"
+          echo "Pages URL: $PAGES_URL"
+          echo "Waiting up to 60s for the Pages site to become available..."
+          ok=0
+          for i in {1..12}; do
+            status=$(curl -s -o /dev/null -w "%{http_code}" "$PAGES_URL" || echo "000")
+            if [ "$status" = "200" ]; then
+              ok=1
+              echo "✅ Pages is live: $PAGES_URL"
+              break
+            fi
+            echo "Attempt $i: status=$status - retrying in 5s..."
+            sleep 5
+          done
+          if [ "$ok" -ne 1 ]; then
+            echo "⚠️ Pages did not return 200 within timeout; it may still be deploying."
+          fi
+          echo "- 🔗 Allure report (Pages): $PAGES_URL" >> $GITHUB_STEP_SUMMARY
+          echo "Allure Pages URL: $PAGES_URL"
+
       - name: Test Execution Summary
         if: always()
         run: |
