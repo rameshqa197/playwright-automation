@@ -74,6 +74,51 @@ jobs:
           publish_dir: ./allure-report
           publish_branch: gh-pages
 
+      - name: Ensure Pages source set to gh-pages
+        if: always()
+        run: |
+          OWNER="${GITHUB_REPOSITORY%%/*}"
+          REPO="${GITHUB_REPOSITORY#*/}"
+          echo "Configuring Pages source to gh-pages for $OWNER/$REPO"
+          curl -s -X PUT \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            https://api.github.com/repos/${OWNER}/${REPO}/pages \
+            -d '{"source":{"branch":"gh-pages","path":"/"}}' || echo "Pages config API call failed"
+
+      - name: Verify gh-pages branch contents
+        if: always()
+        run: |
+          OWNER="${GITHUB_REPOSITORY%%/*}"
+          REPO="${GITHUB_REPOSITORY#*/}"
+          echo "Listing top-level files on gh-pages branch:"
+          curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" "https://api.github.com/repos/${OWNER}/${REPO}/contents?ref=gh-pages" | jq -r '.[] | .name + "\t" + (.type // "")' || true
+          echo "Checking for index.html presence:"
+          curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" "https://api.github.com/repos/${OWNER}/${REPO}/contents/index.html?ref=gh-pages" | jq -r '.name // "missing"' || true
+
+      - name: Poll Pages URL until available
+        if: always()
+        run: |
+          OWNER="${GITHUB_REPOSITORY%%/*}"
+          REPO="${GITHUB_REPOSITORY#*/}"
+          PAGES_URL="https://${OWNER}.github.io/${REPO}/"
+          echo "Polling $PAGES_URL"
+          ok=0
+          for i in {1..12}; do
+            status=$(curl -s -o /dev/null -w "%{http_code}" "$PAGES_URL" || echo "000")
+            echo "Attempt $i: HTTP $status"
+            if [ "$status" = "200" ]; then
+              ok=1
+              break
+            fi
+            sleep 5
+          done
+          if [ "$ok" -ne 1 ]; then
+            echo "Pages not available yet (still may be deploying)"
+          else
+            echo "Pages live: $PAGES_URL"
+          fi
+
       - name: Add Report Link to Summary
         if: always()
         run: |
