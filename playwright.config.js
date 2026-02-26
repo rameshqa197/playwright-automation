@@ -2,24 +2,13 @@
 
 const dotenv = require('dotenv');
 
-// ✅ Read environment from CLI (--env=qa)
-const envFromCLI = process.argv.find(arg => arg.startsWith('--env='));
+const envArg = process.argv.find(arg => arg.startsWith('--env='));
+const environment = envArg?.split('=')[1] || 'dev';
 
-// ✅ Read environment from CI variable
-const envFromSystem = process.env.TEST_ENV;
-
-// ✅ Final environment resolution priority
-const environment =
-  envFromCLI?.split('=')[1] ||
-  envFromSystem ||
-  'dev'; // default
-
-// ✅ Load correct .env file
 dotenv.config({ path: `.env.${environment}` });
 
-console.log(`\n Running tests on environment: ${environment}`);
+console.log(`Running tests on environment: ${environment}`);
 console.log(`🔗 Base URL: ${process.env.BASE_URL}\n`);
-
 
 
 const config = {

@@ -15,8 +15,8 @@ test('Ui basic test with login', async ({ browser }) => {
     await signInBtn.click();
     console.log(await page.locator("[style*='block']").textContent());
 
-    await userName.fill("");
-    await password.fill("");
+    await userName.clear()
+    await password.clear()
     await userName.fill('rahulshettyacademy');
     await password.fill(await passwordLoc.textContent());
     await signInBtn.click();
