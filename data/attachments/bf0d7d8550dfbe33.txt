@@ -1,0 +1,3 @@
+Total Rows: 2
+
+3 | Aniseed Syrup | 2 | 10.00

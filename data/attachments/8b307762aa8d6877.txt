@@ -1,0 +1,13 @@
+Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2Nzc1NTk3OGUyYjU0NDNiMWYwZDQxZDQiLCJ1c2VyRW1haWwiOiJjaGFuZDcyNzJAZ21haWwuY29tIiwidXNlck1vYmlsZSI6NDY0NTY0NTYxMSwidXNlclJvbGUiOiJjdXN0b21lciIsImlhdCI6MTc3MjA4Nzk1MCwiZXhwIjoxODAzNjQ1NTUwfQ.NFtDhwtvDmc-a6Qqvv-HQMhfFACjJSw7xFrCjtA6iCw
+{
+  _id: '699fea8f0ab5a029774b5107',
+  orderById: '67755978e2b5443b1f0d41d4',
+  orderBy: 'chand7272@gmail.com',
+  productOrderedId: '6960eac0c941646b7a8b3e68',
+  productName: 'ZARA COAT 3',
+  country: 'India',
+  productDescription: 'Apple phone',
+  productImage: 'https://rahulshettyacademy.com/api/ecom/uploads/productImage_1767959232316.jpeg',
+  orderPrice: '11500',
+  __v: 0
+}
